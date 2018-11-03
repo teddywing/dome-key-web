@@ -1,0 +1,23 @@
+[[package]]
+name = "fastcgi"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "libc 0.2.43 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "libc"
+version = "0.2.43"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "license-generator"
+version = "0.0.1"
+dependencies = [
+ "fastcgi 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[metadata]
+"checksum fastcgi 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = "c4159a0f48bea0281602e508eb070d7d7ba1f6ac2480f9db1a60a39274aea1cc"
+"checksum libc 0.2.43 (registry+https://github.com/rust-lang/crates.io-index)" = "76e3a3ef172f1a0b9a9ff0dd1491ae5e6c948b94479a3021819ba7d860c8645d"
