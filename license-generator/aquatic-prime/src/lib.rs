@@ -8,7 +8,20 @@ struct AquaticPrime<'a> {
 }
 
 impl<'a> AquaticPrime<'a> {
-    fn sign(&self, input_data: &HashMap<&str, &str>) -> String {
+    fn sign(&self, input_data: HashMap<&str, &str>) -> String {
+        let mut input_data: Vec<(&str, &str)> = input_data
+            .into_iter()
+            .collect();
+        input_data.sort();
+
+        let data = input_data
+            .into_iter()
+            .map(|(k, v)| v)
+            .collect::<Vec<&str>>()
+            .concat();
+
+        println!("{:?}", data);
+
         String::new()
     }
 }
@@ -32,7 +45,7 @@ mod tests {
         license_data.insert("Email", "user@email.com");
         license_data.insert("Name", "User");
 
-        let signature = aquatic_prime.sign(&license_data);
+        let signature = aquatic_prime.sign(license_data);
 
         let expected = "Nhe6U/8XCMm7/+2OIzrHjcOsYHNZTg4k8nTajp1dTb+pU5H1cybgQzUJYA1n3IIQAbWe \
             qD7a48WFqbzC3powTk6x42b+WpH6boe+u7LW4AXo2ZqGPasVlr1/lUWVHvt5J0OI9oR7 \
@@ -46,7 +59,7 @@ mod tests {
         license_data.insert("Name", "Üsér Diacriticà");
         license_data.insert("lowercase key", "Keys should be sorted case-insensitive");
 
-        let signature = aquatic_prime.sign(&license_data);
+        let signature = aquatic_prime.sign(license_data);
 
         let expected = "RIhF/3CgyXzPg2wCQ5LShf6W9khtqPcqUDLAHcAZdOIcoeR7PoOHi15423kxq5jOh1lm \
             cztBoUJFu8mB45MHE0jmmbRw3qK6FJz9Py2gi1XvGOgH3GW713OCvQBE7vfBj4ZriP0+ \
