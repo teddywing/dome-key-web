@@ -2,6 +2,14 @@ extern crate openssl;
 
 use std::collections::HashMap;
 
+use openssl::bn::BigNum;
+use openssl::hash::MessageDigest;
+use openssl::rsa::Padding;
+use openssl::pkey::PKey;
+use openssl::rsa::RsaPrivateKeyBuilder;
+use openssl::sha::sha1;
+use openssl::sign::Signer;
+
 struct AquaticPrime<'a> {
     public_key: &'a str,
     private_key: &'a str,
@@ -20,7 +28,37 @@ impl<'a> AquaticPrime<'a> {
             .collect::<Vec<&str>>()
             .concat();
 
-        println!("{:?}", data);
+        let public_key = BigNum::from_hex_str(self.public_key).unwrap();
+        let private_key = BigNum::from_hex_str(self.private_key).unwrap();
+        let rsa_e = BigNum::from_u32(3).unwrap();
+
+        if public_key.num_bits() != 1024 {
+            // TODO: Return Err
+        }
+
+        let digest = sha1(data.as_bytes());
+
+        let keypair = RsaPrivateKeyBuilder::new(
+            public_key,
+            rsa_e,
+            private_key,
+        ).expect("failed to build RSA key").build();
+
+        let mut signature = [0; 128];
+        keypair.private_encrypt(
+            &digest,
+            &mut signature,
+            Padding::PKCS1,
+        ).expect("failed to encrypt");
+
+
+        // let keypair = PKey::from_rsa(keypair).unwrap();
+        //
+        // let mut signer = Signer::new(MessageDigest::sha1(), &keypair).unwrap();
+        // signer.update(data.as_bytes());
+        // let signature = signer.sign_to_vec();
+
+        println!("{:?}", String::from_utf8_lossy(&signature));
 
         String::new()
     }
