@@ -4,3 +4,6 @@ version = "0.0.1"
 
 [dependencies]
 fastcgi = "1.0.0"
+
+[workspace]
+members = ["aquatic-prime"]

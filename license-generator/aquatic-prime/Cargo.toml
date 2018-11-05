@@ -1,0 +1,6 @@
+[package]
+name = "aquatic-prime"
+version = "0.0.1"
+
+[dependencies]
+openssl = "0.10.15"
