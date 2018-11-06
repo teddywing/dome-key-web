@@ -1,5 +1,12 @@
 extern crate base64;
+
+#[macro_use]
+extern crate error_chain;
 extern crate openssl;
+
+mod errors {
+    error_chain! {}
+}
 
 use std::collections::HashMap;
 
@@ -7,6 +14,8 @@ use openssl::bn::BigNum;
 use openssl::rsa::Padding;
 use openssl::rsa::RsaPrivateKeyBuilder;
 use openssl::sha::sha1;
+
+use errors::*;
 
 struct AquaticPrime<'a> {
     public_key: &'a str,
