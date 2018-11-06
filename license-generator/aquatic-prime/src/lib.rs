@@ -35,8 +35,8 @@ impl<'a> AquaticPrime<'a> {
             .collect::<Vec<&str>>()
             .concat();
 
-        let public_key = self.public_key.get(2..).unwrap();
-        let private_key = self.private_key.get(2..).unwrap();
+        let public_key = self.public_key.trim_left_matches("0x");
+        let private_key = self.private_key.trim_left_matches("0x");
 
         let public_key = BigNum::from_hex_str(public_key)
             .chain_err(|| "public key could not be converted to BigNum")?;
