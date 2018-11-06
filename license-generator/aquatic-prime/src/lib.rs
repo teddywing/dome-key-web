@@ -21,7 +21,7 @@ impl<'a> AquaticPrime<'a> {
         let mut input_data: Vec<(&str, &str)> = input_data
             .into_iter()
             .collect();
-        input_data.sort();
+        input_data.sort_unstable_by_key(|el| el.0.to_lowercase());
 
         let data = input_data
             .into_iter()
