@@ -4,12 +4,9 @@ extern crate openssl;
 use std::collections::HashMap;
 
 use openssl::bn::BigNum;
-use openssl::hash::MessageDigest;
 use openssl::rsa::Padding;
-use openssl::pkey::PKey;
 use openssl::rsa::RsaPrivateKeyBuilder;
 use openssl::sha::sha1;
-use openssl::sign::Signer;
 
 struct AquaticPrime<'a> {
     public_key: &'a str,
@@ -25,7 +22,7 @@ impl<'a> AquaticPrime<'a> {
 
         let data = input_data
             .into_iter()
-            .map(|(k, v)| v)
+            .map(|(_k, v)| v)
             .collect::<Vec<&str>>()
             .concat();
 
@@ -51,15 +48,6 @@ impl<'a> AquaticPrime<'a> {
             &mut signature,
             Padding::PKCS1,
         ).expect("failed to encrypt");
-
-
-        // let keypair = PKey::from_rsa(keypair).unwrap();
-        //
-        // let mut signer = Signer::new(MessageDigest::sha1(), &keypair).unwrap();
-        // signer.update(data.as_bytes());
-        // let signature = signer.sign_to_vec();
-
-        println!("{:?}", String::from_utf8_lossy(&signature));
 
         base64::encode(&signature[..])
     }
