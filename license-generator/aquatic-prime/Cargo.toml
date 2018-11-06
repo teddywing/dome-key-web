@@ -3,4 +3,5 @@ name = "aquatic-prime"
 version = "0.0.1"
 
 [dependencies]
+base64 = "0.10.0"
 openssl = "0.10.15"

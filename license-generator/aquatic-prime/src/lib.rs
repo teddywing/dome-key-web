@@ -1,3 +1,4 @@
+extern crate base64;
 extern crate openssl;
 
 use std::collections::HashMap;
@@ -60,7 +61,7 @@ impl<'a> AquaticPrime<'a> {
 
         println!("{:?}", String::from_utf8_lossy(&signature));
 
-        String::new()
+        base64::encode(&signature[..])
     }
 }
 
