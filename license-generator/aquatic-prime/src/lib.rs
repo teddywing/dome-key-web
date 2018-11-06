@@ -28,8 +28,8 @@ impl<'a> AquaticPrime<'a> {
             .collect::<Vec<&str>>()
             .concat();
 
-        let public_key = BigNum::from_hex_str(self.public_key).unwrap();
-        let private_key = BigNum::from_hex_str(self.private_key).unwrap();
+        let public_key = BigNum::from_hex_str(self.public_key.get(2..).unwrap()).unwrap();
+        let private_key = BigNum::from_hex_str(self.private_key.get(2..).unwrap()).unwrap();
         let rsa_e = BigNum::from_u32(3).unwrap();
 
         if public_key.num_bits() != 1024 {
