@@ -5,7 +5,14 @@ extern crate error_chain;
 extern crate openssl;
 
 mod errors {
-    error_chain! {}
+    error_chain! {
+        errors {
+            PublicKeyIncorrectNumBits(bits: i32) {
+                description("public key has incorrect bit size")
+                display("public key has incorrect bit size: '{}'", bits)
+            }
+        }
+    }
 }
 
 use std::collections::HashMap;
@@ -45,8 +52,11 @@ impl<'a> AquaticPrime<'a> {
         let rsa_e = BigNum::from_u32(3)
             .chain_err(|| "public exponent could not be converted to BigNum")?;
 
-        if public_key.num_bits() != 1024 {
-            // TODO: Return Err
+        let public_key_bit_size = public_key.num_bits();
+        if public_key_bit_size != 1024 {
+            return Err(
+                ErrorKind::PublicKeyIncorrectNumBits(public_key_bit_size).into()
+            );
         }
 
         let digest = sha1(data.as_bytes());
