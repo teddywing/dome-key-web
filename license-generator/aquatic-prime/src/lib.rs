@@ -23,7 +23,7 @@ struct AquaticPrime<'a> {
 }
 
 impl<'a> AquaticPrime<'a> {
-    fn sign(&self, input_data: HashMap<&str, &str>) -> String {
+    fn sign(&self, input_data: HashMap<&str, &str>) -> Result<String> {
         let mut input_data: Vec<(&str, &str)> = input_data
             .into_iter()
             .collect();
@@ -35,9 +35,15 @@ impl<'a> AquaticPrime<'a> {
             .collect::<Vec<&str>>()
             .concat();
 
-        let public_key = BigNum::from_hex_str(self.public_key.get(2..).unwrap()).unwrap();
-        let private_key = BigNum::from_hex_str(self.private_key.get(2..).unwrap()).unwrap();
-        let rsa_e = BigNum::from_u32(3).unwrap();
+        let public_key = self.public_key.get(2..).unwrap();
+        let private_key = self.private_key.get(2..).unwrap();
+
+        let public_key = BigNum::from_hex_str(public_key)
+            .chain_err(|| "public key could not be converted to BigNum")?;
+        let private_key = BigNum::from_hex_str(private_key)
+            .chain_err(|| "private key could not be converted to BigNum")?;
+        let rsa_e = BigNum::from_u32(3)
+            .chain_err(|| "public exponent could not be converted to BigNum")?;
 
         if public_key.num_bits() != 1024 {
             // TODO: Return Err
@@ -49,16 +55,18 @@ impl<'a> AquaticPrime<'a> {
             public_key,
             rsa_e,
             private_key,
-        ).expect("failed to build RSA key").build();
+        )
+            .chain_err(|| "failed to build RSA key")?
+            .build();
 
         let mut signature = [0; 128];
         keypair.private_encrypt(
             &digest,
             &mut signature,
             Padding::PKCS1,
-        ).expect("failed to encrypt");
+        ).chain_err(|| "failed to encrypt input")?;
 
-        base64::encode(&signature[..])
+        Ok(base64::encode(&signature[..]))
     }
 }
 
@@ -87,7 +95,7 @@ mod tests {
             qD7a48WFqbzC3powTk6x42b+WpH6boe+u7LW4AXo2ZqGPasVlr1/lUWVHvt5J0OI9oR7\
             vmzdXHbbQD7RPXp0ezttrKBFHxNNCbJHMr0=";
 
-        assert_eq!(signature, expected);
+        assert_eq!(signature.unwrap(), expected);
 
 
         let mut license_data = HashMap::new();
@@ -101,6 +109,6 @@ mod tests {
             cztBoUJFu8mB45MHE0jmmbRw3qK6FJz9Py2gi1XvGOgH3GW713OCvQBE7vfBj4ZriP0+\
             FS18nLfrtM6Xp0mAd1la4DD4oh7d35dlYTY=";
 
-        assert_eq!(signature, expected);
+        assert_eq!(signature.unwrap(), expected);
     }
 }
