@@ -10,11 +10,23 @@ extern crate serde;
 extern crate serde_derive;
 
 mod errors {
+    use plist;
+
     error_chain! {
+        foreign_links {
+            FromUtf8(::std::string::FromUtf8Error);
+
+            Plist(plist::Error);
+        }
+
         errors {
             PublicKeyIncorrectNumBits(bits: i32) {
                 description("public key has incorrect bit size")
                 display("public key has incorrect bit size: '{}'", bits)
+            }
+
+            InvalidLicenseData {
+                display("license data must be a dictionary")
             }
         }
     }
@@ -91,18 +103,26 @@ impl<'a> AquaticPrime<'a> {
         // Get input as `Plist`
         let mut xml_for_plist = Vec::with_capacity(600);
 
-        plist::serde::serialize_to_xml(&mut xml_for_plist, &input_data).unwrap();
+        plist::serde::serialize_to_xml(&mut xml_for_plist, &input_data)?;
         let xml_for_hash_map = xml_for_plist.clone();
 
-        let plist_data = Plist::read(Cursor::new(&xml_for_plist)).unwrap();
+        let plist_data = Plist::read(Cursor::new(&xml_for_plist))?;
 
-        let mut plist_dict = plist_data.as_dictionary().unwrap().to_owned();
+        let mut plist_dict = plist_data
+            .as_dictionary()
+            .ok_or(ErrorKind::InvalidLicenseData)?
+            .to_owned();
 
         // Get input as HashMap to send to `sign()`
-        let data: HashMap<String, String> = plist::serde::deserialize(Cursor::new(&xml_for_hash_map)).unwrap();
+        let data: HashMap<String, String> = plist::serde::deserialize(
+            Cursor::new(&xml_for_hash_map)
+        )?;
 
-        let signature = self.sign(data).unwrap();
-        plist_dict.insert("Signature".to_owned(), Plist::Data(signature.into_bytes()));
+        let signature = self.sign(data)?;
+        plist_dict.insert(
+            "Signature".to_owned(),
+            Plist::Data(signature.into_bytes())
+        );
 
         // Generate plist XML string
         let mut plist_xml = Cursor::new(Vec::with_capacity(600));
@@ -111,11 +131,11 @@ impl<'a> AquaticPrime<'a> {
             let mut writer = plist::xml::EventWriter::new(&mut plist_xml);
 
             for item in Plist::Dictionary(plist_dict).into_events() {
-                writer.write(&item).unwrap();
+                writer.write(&item)?;
             }
         }
 
-        Ok(String::from_utf8(plist_xml.into_inner()).unwrap())
+        Ok(String::from_utf8(plist_xml.into_inner())?)
     }
 }
 
