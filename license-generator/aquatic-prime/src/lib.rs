@@ -38,8 +38,8 @@ struct AquaticPrime<'a> {
 }
 
 impl<'a> AquaticPrime<'a> {
-    fn sign(&self, input_data: HashMap<&str, &str>) -> Result<String> {
-        let mut input_data: Vec<(&str, &str)> = input_data
+    fn sign(&self, input_data: HashMap<String, String>) -> Result<String> {
+        let mut input_data: Vec<(String, String)> = input_data
             .into_iter()
             .collect();
         input_data.sort_unstable_by_key(|el| el.0.to_lowercase());
@@ -47,7 +47,7 @@ impl<'a> AquaticPrime<'a> {
         let data = input_data
             .into_iter()
             .map(|(_k, v)| v)
-            .collect::<Vec<&str>>()
+            .collect::<Vec<String>>()
             .concat();
 
         let public_key = self.public_key.trim_left_matches("0x");
@@ -87,79 +87,35 @@ impl<'a> AquaticPrime<'a> {
         Ok(base64::encode(&signature[..]))
     }
 
-    // TODO: Should take a plistable object as input
-    // Serialize input_data to a Plist (input_data doesn't include signature field?)
-    // Get the BTreeMap out and send it to sign()
-    // Insert signature into Plist BTreeMap
-    // Output plist string
-    //
-    // fn plist(&self, input_data: HashMap<&str, &str>) -> Result<String> {
     fn plist<T: Serialize>(&self, input_data: T) -> Result<String> {
-        // let signature = self.sign(input_data.clone());
-        // let mut data: BTreeMap<&str, &str> = input_data
-        //     .into_iter()
-        //     .collect();
-        //
-        // data.insert();
-        // let mut tmp = String::with_capacity(600);
-        let mut tmp = Vec::with_capacity(600);
+        // Get input as `Plist`
+        let mut xml_for_plist = Vec::with_capacity(600);
 
-        plist::serde::serialize_to_xml(&mut tmp, &input_data).unwrap();
-        // let xml = String::from_utf8(tmp).unwrap();
+        plist::serde::serialize_to_xml(&mut xml_for_plist, &input_data).unwrap();
+        let xml_for_hash_map = xml_for_plist.clone();
 
-        // println!("Serialized: {}", xml);
-
-        // let le_plist: Plist = plist::serde::deserialize(Cursor::new(&tmp[..])).unwrap();
-        let tmp2 = tmp.clone();
-        let plist_data = Plist::read(Cursor::new(&tmp)).unwrap();
-        println!("{:?}", plist_data);
+        let plist_data = Plist::read(Cursor::new(&xml_for_plist)).unwrap();
 
         let mut plist_dict = plist_data.as_dictionary().unwrap().to_owned();
 
-        // let hash_data: BTreeMap<String, String> = data
-        //     .into_iter()
-        //     .map(|(k, v)| (k, String::from(v)))
-        //     .collect();
+        // Get input as HashMap to send to `sign()`
+        let data: HashMap<String, String> = plist::serde::deserialize(Cursor::new(&xml_for_hash_map)).unwrap();
 
-        // let hash_data: BTreeMap<&str, &str> = data.into_iter().collect();
-        // self.sign(data);
-        // data.insert();
-
-        // let data_a = BTreeMap::new();
-        // for (k, v) in data.iter() {
-        //     data_a.insert(k, String::from(v));
-        // }
-
-        let data: HashMap<String, String> = plist::serde::deserialize(Cursor::new(&tmp2)).unwrap();
-        println!("{:?}", data);
-        let mut data_a = HashMap::new();
-        for (k, v) in data.iter() {
-            data_a.insert(k.as_ref(), v.as_ref());
-        }
-
-        let signature = self.sign(data_a).unwrap();
-        println!("Signature: {}", signature);
-
-        // Re-serialise to Plist
-        // Add signature as Data type
-
+        let signature = self.sign(data).unwrap();
         plist_dict.insert("Signature".to_owned(), Plist::Data(signature.into_bytes()));
 
-        let mut tmp_return = Cursor::new(Vec::with_capacity(600));
-        // plist::serde::serialize_to_xml(&mut tmp_return, &plist_data).unwrap();
-        // println!("Output: {}", tmp_return);
+        // Generate plist XML string
+        let mut plist_xml = Cursor::new(Vec::with_capacity(600));
 
         {
-        let mut writer = plist::xml::EventWriter::new(&mut tmp_return);
-        // let plist_plist = Plist::Dictionary(plist_data);
-        for item in Plist::Dictionary(plist_dict).into_events() {
-            writer.write(&item).unwrap();
-        }
+            let mut writer = plist::xml::EventWriter::new(&mut plist_xml);
+
+            for item in Plist::Dictionary(plist_dict).into_events() {
+                writer.write(&item).unwrap();
+            }
         }
 
-        println!("Output: {}", String::from_utf8(tmp_return.into_inner()).unwrap());
-
-        Ok(String::new())
+        Ok(String::from_utf8(plist_xml.into_inner()).unwrap())
     }
 }
 
@@ -179,8 +135,8 @@ mod tests {
         };
 
         let mut license_data = HashMap::new();
-        license_data.insert("Email", "user@email.com");
-        license_data.insert("Name", "User");
+        license_data.insert("Email".to_owned(), "user@email.com".to_owned());
+        license_data.insert("Name".to_owned(), "User".to_owned());
 
         let signature = aquatic_prime.sign(license_data);
 
@@ -192,9 +148,12 @@ mod tests {
 
 
         let mut license_data = HashMap::new();
-        license_data.insert("Email", "user@email.com");
-        license_data.insert("Name", "Üsér Diacriticà");
-        license_data.insert("lowercase key", "Keys should be sorted case-insensitive");
+        license_data.insert("Email".to_owned(), "user@email.com".to_owned());
+        license_data.insert("Name".to_owned(), "Üsér Diacriticà".to_owned());
+        license_data.insert(
+            "lowercase key".to_owned(),
+            "Keys should be sorted case-insensitive".to_owned()
+        );
 
         let signature = aquatic_prime.sign(license_data);
 
