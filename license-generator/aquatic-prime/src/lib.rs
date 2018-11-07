@@ -232,7 +232,10 @@ mod tests {
 
         #[derive(Serialize)]
         struct LicenseData<'a> {
+            #[serde(rename = "Name")]
             name: &'a str,
+
+            #[serde(rename = "Email")]
             email: &'a str,
         };
 
@@ -245,12 +248,12 @@ mod tests {
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>Email</key>
+	<string>user@example.com</string>
+	<key>Name</key>
+	<string>User</string>
 	<key>Signature</key>
 	<data>djFsFgYkt/ESgOnR+dpOFBTqpgWCG9aZggOYG/zv3uOEMf39Zwt5m7L+ulFjmZvfvUR/twuwKRfPWLGjoDHPQqwbBED3PcIP4asBeRbt28y6425tah4KV5SVnzVmZgAwCjkeuOEO5WPljiPXkvbUEVqNaEm79moMkHO9nYKdnP0=</data>
-	<key>email</key>
-	<string>user@example.com</string>
-	<key>name</key>
-	<string>User</string>
 </dict>
 </plist>"#;
 
