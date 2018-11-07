@@ -6,6 +6,7 @@ extern crate openssl;
 extern crate plist;
 extern crate serde;
 
+#[cfg(test)]
 #[macro_use]
 extern crate serde_derive;
 
@@ -32,7 +33,7 @@ mod errors {
     }
 }
 
-use std::collections::{BTreeMap, HashMap};
+use std::collections::HashMap;
 use std::io::Cursor;
 
 use openssl::bn::BigNum;
