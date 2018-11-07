@@ -6,6 +6,6 @@ version = "0.0.1"
 base64 = "0.10.0"
 error-chain = "0.12.0"
 openssl = "0.10.15"
-plist = "0.3.0"
+plist = { path = "../../../rust-plist", branch = "data-without-base64-mime" }
 serde = "1.0.80"
 serde_derive = "1.0.80"

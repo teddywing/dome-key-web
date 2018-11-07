@@ -50,7 +50,7 @@ struct AquaticPrime<'a> {
 }
 
 impl<'a> AquaticPrime<'a> {
-    fn sign(&self, input_data: HashMap<String, String>) -> Result<String> {
+    fn sign(&self, input_data: HashMap<String, String>) -> Result<[u8; 128]> {
         let mut input_data: Vec<(String, String)> = input_data
             .into_iter()
             .collect();
@@ -96,7 +96,7 @@ impl<'a> AquaticPrime<'a> {
             Padding::PKCS1,
         ).chain_err(|| "failed to encrypt input")?;
 
-        Ok(base64::encode(&signature[..]))
+        Ok(signature)
     }
 
     fn plist<T: Serialize>(&self, input_data: T) -> Result<String> {
@@ -121,7 +121,7 @@ impl<'a> AquaticPrime<'a> {
         let signature = self.sign(data)?;
         plist_dict.insert(
             "Signature".to_owned(),
-            Plist::Data(signature.into_bytes())
+            Plist::Data(signature.to_vec())
         );
 
         // Generate plist XML string
@@ -176,7 +176,7 @@ mod tests {
             qD7a48WFqbzC3powTk6x42b+WpH6boe+u7LW4AXo2ZqGPasVlr1/lUWVHvt5J0OI9oR7\
             vmzdXHbbQD7RPXp0ezttrKBFHxNNCbJHMr0=";
 
-        assert_eq!(signature.unwrap(), expected);
+        assert_eq!(base64::encode(&signature.unwrap()[..]), expected);
 
 
         let mut license_data = HashMap::new();
@@ -193,7 +193,7 @@ mod tests {
             cztBoUJFu8mB45MHE0jmmbRw3qK6FJz9Py2gi1XvGOgH3GW713OCvQBE7vfBj4ZriP0+\
             FS18nLfrtM6Xp0mAd1la4DD4oh7d35dlYTY=";
 
-        assert_eq!(signature.unwrap(), expected);
+        assert_eq!(base64::encode(&signature.unwrap()[..]), expected);
     }
 
     #[test]
@@ -205,9 +205,7 @@ mod tests {
         license_data.insert("Name", "Üsér Diacriticà");
         license_data.insert("lowercase key", "Keys should be sorted case-insensitive");
 
-        aquatic_prime.plist(license_data);
-
-r#"<?xml version="1.0" encoding="UTF-8"?>
+        let expected = r#"<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
@@ -216,15 +214,16 @@ r#"<?xml version="1.0" encoding="UTF-8"?>
 	<key>Name</key>
 	<string>Üsér Diacriticà</string>
 	<key>Signature</key>
-	<data>
-	RIhF/3CgyXzPg2wCQ5LShf6W9khtqPcqUDLAHcAZdOIcoeR7PoOHi15423kxq5jOh1lm
-	cztBoUJFu8mB45MHE0jmmbRw3qK6FJz9Py2gi1XvGOgH3GW713OCvQBE7vfBj4ZriP0+
-	FS18nLfrtM6Xp0mAd1la4DD4oh7d35dlYTY=
-	</data>
+	<data>RIhF/3CgyXzPg2wCQ5LShf6W9khtqPcqUDLAHcAZdOIcoeR7PoOHi15423kxq5jOh1lmcztBoUJFu8mB45MHE0jmmbRw3qK6FJz9Py2gi1XvGOgH3GW713OCvQBE7vfBj4ZriP0+FS18nLfrtM6Xp0mAd1la4DD4oh7d35dlYTY=</data>
 	<key>lowercase key</key>
 	<string>Keys should be sorted case-insensitive</string>
 </dict>
 </plist>"#;
+
+        assert_eq!(
+            aquatic_prime.plist(license_data).unwrap(),
+            expected
+        );
     }
 
     #[test]
@@ -235,15 +234,29 @@ r#"<?xml version="1.0" encoding="UTF-8"?>
         struct LicenseData<'a> {
             name: &'a str,
             email: &'a str,
-            // signature: Vec<u8>,
         };
 
         let license_data = LicenseData {
             name: "User",
             email: "user@example.com",
-            // signature: vec![],
         };
 
-        aquatic_prime.plist(license_data);
+        let expected = r#"<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Signature</key>
+	<data>djFsFgYkt/ESgOnR+dpOFBTqpgWCG9aZggOYG/zv3uOEMf39Zwt5m7L+ulFjmZvfvUR/twuwKRfPWLGjoDHPQqwbBED3PcIP4asBeRbt28y6425tah4KV5SVnzVmZgAwCjkeuOEO5WPljiPXkvbUEVqNaEm79moMkHO9nYKdnP0=</data>
+	<key>email</key>
+	<string>user@example.com</string>
+	<key>name</key>
+	<string>User</string>
+</dict>
+</plist>"#;
+
+        assert_eq!(
+            aquatic_prime.plist(license_data).unwrap(),
+            expected
+        );
     }
 }
