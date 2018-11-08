@@ -1,0 +1,5 @@
+set(MURKY_POND, #91947f)
+
+.color-murky-pond {
+	color: MURKY_POND;
+}
