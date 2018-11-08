@@ -32,9 +32,21 @@ where I: ExactSizeIterator<Item = (&'a str, &'a str)> {
 
 #[cfg(test)]
 mod tests {
+    use std::collections::BTreeMap;
+
     use super::*;
 
     #[test]
     fn php_serialize_serializes_key_values_as_php_string() {
+        let mut data = BTreeMap::new();
+        data.insert("checkout_id", "1234asdfjkl");
+        data.insert("currency", "USD");
+        data.insert("customer_name", "Senjougahara");
+
+        let expected = r#"a:3:{s:11:"checkout_id";s:11:"1234asdfjkl";s:8:"currency";s:3:"USD";s:13:"customer_name";s:12:"Senjougahara";}"#;
+
+        let serialized_data = php_serialize(data);
+
+        assert_eq!(serialized_data, expected);
     }
 }
