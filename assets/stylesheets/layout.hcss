@@ -5,6 +5,8 @@ body {
 	font: 19px "Georgia", serif;
 }
 
+header { margin-left: -90px; }
+
 header h1 { display: none; }
 
 h2 {
@@ -19,6 +21,8 @@ p {
 
 .content {
 	width: 640px;
+	margin-top: 1.8em;
+	margin-bottom: 2em;
 	margin-left: 11%;
 }
 
