@@ -1,7 +1,21 @@
+extern crate openssl;
+
+use openssl::hash::MessageDigest;
+use openssl::pkey::PKey;
+use openssl::rsa::Rsa;
+use openssl::sign::Verifier;
+
+
 // https://paddle.com/docs/reference-verifying-webhooks/
-fn verify_signature<'a, I>(params: I) -> bool
+fn verify_signature<'a, I>(pem: &[u8], params: I) -> bool
 where I: IntoIterator<Item = (&'a str, &'a str)> {
-    false
+    let rsa = Rsa::public_key_from_pem(pem).unwrap();
+    let pkey = PKey::from_rsa(rsa).unwrap();
+    let verifier = Verifier::new(MessageDigest::sha1(), &pkey).unwrap();
+
+    let signature = php_serialize(params);
+
+    verifier.verify(signature.as_ref()).unwrap()
 }
 
 fn php_serialize<'a, I>(pairs: I) -> String

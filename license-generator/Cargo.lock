@@ -149,6 +149,9 @@ dependencies = [
 [[package]]
 name = "paddle"
 version = "0.0.1"
+dependencies = [
+ "openssl 0.10.15 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
 [[package]]
 name = "pkg-config"
