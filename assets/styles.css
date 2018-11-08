@@ -1,0 +1,8 @@
+body {
+	background-color: #e3ce88;
+	color: #222;
+
+	font: 19px "Georgia", serif;
+}
+
+header h1 { display: none; }
