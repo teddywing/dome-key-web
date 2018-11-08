@@ -6,3 +6,23 @@ body {
 }
 
 header h1 { display: none; }
+
+.code {
+	font-family: "Monaco", monospace;
+}
+
+.code-block {
+	padding: 12px 16px;
+
+    border: solid 2px #8c6e6e;
+	border-radius: 6px;
+	box-shadow: inset 1px 1px 10px #402929;
+
+	background-color: #483f3d;
+	color: #c9ccb4;
+	text-shadow: 1px 3px 5px #230f0f;
+}
+
+.color-murky-pond {
+	color: #91947f;
+}
