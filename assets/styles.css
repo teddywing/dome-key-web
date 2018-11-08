@@ -8,14 +8,30 @@ body {
 	font: 19px "Georgia", serif;
 }
 header h1 { display: none; }
+h2 {
+    margin-top: 1.2em;
+    margin-bottom: 0.4em;
+}
+p {
+	margin-top: 0.8em;
+	margin-bottom: 0.8em;
+}
+.content {
+	width: 640px;
+	margin-left: 11%;
+}
 .code-block {
 	padding: 12px 16px;
+	overflow: auto;
     border: solid 2px #8c6e6e;
 	border-radius: 6px;
 	box-shadow: inset 1px 1px 10px #402929;
 	background-color: #483f3d;
 	color: #c9ccb4;
 	text-shadow: 1px 3px 5px #230f0f;
+}
+.margin-bottom-1\.8 {
+	margin-bottom: 1.8em;
 }
 h1, h2, h3, h4, h5, h6 {
 	font-family: "Lucida Grande", "Lucida Sans Unicode", Geneva, sans-serif;
