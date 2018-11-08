@@ -16,13 +16,48 @@
 	</header>
 
 	<div class="content">
+		<p>
+			DomeKey lets you customise headphone buttons 
+		</p>
+
 		<h2>Install</h2>
 		<div class="code code-block">
 			<span class="color-murky-pond">$</span> brew install teddywing/DomeKey/dome-key
 		</div>
 
+		<h2>Examples</h2>
 
-		DomeKey lets you customise headphone buttons 
+		<p>Video controls:</p>
+		<pre class="code code-block">
+map &lt;Up&gt; &lt;Left&gt;
+map &lt;Play&gt; &lt;Space&gt;
+map &lt;Down&gt; &lt;Right&gt;</pre>
+
+		<p>Preserve volume buttons and include video controls in a mode:</p>
+		<pre class="code code-block">
+# Don't launch iTunes when pressing the middle button
+map &lt;Play&gt; &lt;Nop&gt;
+
+mode &lt;Play&gt;&lt;Play&gt; {
+    map &lt;Up&gt; &lt;Left&gt;
+    map &lt;Play&gt; &lt;Space&gt;
+    map &lt;Down&gt; &lt;Right&gt;
+}</pre>
+
+		<p>Application switcher:</p>
+		<pre class="code code-block">
+map &lt;Up&gt; &lt;D-S-Tab&gt;
+map &lt;Down&gt; &lt;D-Tab&gt;</pre>
+
+		<p>Open frequently used applications:</p>
+		<pre class="code code-block">
+cmd &lt;Up&gt;   open -a Terminal
+cmd &lt;Play&gt; open -a Xcode
+cmd &lt;Down&gt; open -a Firefox</pre>
+
+		<p>Open Terminal window #2:</p>
+		<pre class="code code-block">
+cmd &lt;Play&gt; osascript -e 'activate application "Terminal"' -e 'tell application "System Events" to keystroke "2" using command down'</pre>
 	</div>
 </body>
 </html>
