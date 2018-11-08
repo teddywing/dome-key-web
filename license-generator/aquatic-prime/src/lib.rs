@@ -1,3 +1,4 @@
+#[cfg(test)]
 extern crate base64;
 
 #[macro_use]
