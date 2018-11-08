@@ -1,17 +1,14 @@
 // https://paddle.com/docs/reference-verifying-webhooks/
 fn verify_signature<'a, I>(params: I) -> bool
-where I: ExactSizeIterator<Item = (&'a str, &'a str)> {
+where I: IntoIterator<Item = (&'a str, &'a str)> {
     false
 }
 
 fn php_serialize<'a, I>(pairs: I) -> String
-where I: ExactSizeIterator<Item = (&'a str, &'a str)> {
+where I: IntoIterator<Item = (&'a str, &'a str)> {
     let mut serialized = String::with_capacity(500);
 
-    serialized.push_str(
-        &format!("a:{pairs_count}:{{", pairs_count = pairs.len())
-    );
-
+    let mut len = 0;
     for (key, value) in pairs {
         serialized.push_str(
             &format!(
@@ -22,11 +19,17 @@ where I: ExactSizeIterator<Item = (&'a str, &'a str)> {
                 value = value
             )
         );
+
+        len += 1;
     }
 
     serialized.push_str("}");
 
-    serialized
+    format!(
+        "a:{pairs_count}:{{{rest}",
+        pairs_count = len,
+        rest = serialized
+    )
 }
 
 
