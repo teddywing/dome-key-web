@@ -7,11 +7,12 @@ use openssl::sign::Verifier;
 
 
 // https://paddle.com/docs/reference-verifying-webhooks/
-fn verify_signature<'a, I>(pem: &[u8], params: I) -> bool
+fn verify_signature<'a, I>(pem: &[u8], signature: &str, params: I) -> bool
 where I: IntoIterator<Item = (&'a str, &'a str)> {
     let rsa = Rsa::public_key_from_pem(pem).unwrap();
     let pkey = PKey::from_rsa(rsa).unwrap();
-    let verifier = Verifier::new(MessageDigest::sha1(), &pkey).unwrap();
+    let mut verifier = Verifier::new(MessageDigest::sha1(), &pkey).unwrap();
+    verifier.update(signature.as_bytes()).unwrap();
 
     let signature = php_serialize(params);
 
