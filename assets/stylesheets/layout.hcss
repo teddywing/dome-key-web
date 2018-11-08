@@ -3,6 +3,7 @@ body {
 	color: #222;
 
 	font: 19px "Georgia", serif;
+	line-height: 1.65em;
 }
 
 header { margin-left: -90px; }
@@ -17,6 +18,10 @@ h2 {
 p {
 	margin-top: 0.8em;
 	margin-bottom: 0.8em;
+}
+
+ul {
+	list-style: disc;
 }
 
 .content {

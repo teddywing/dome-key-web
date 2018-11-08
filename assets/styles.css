@@ -6,6 +6,7 @@ body {
 	background-color: #e3ce88;
 	color: #222;
 	font: 19px "Georgia", serif;
+	line-height: 1.65em;
 }
 header { margin-left: -90px; }
 header h1 { display: none; }
@@ -16,6 +17,9 @@ h2 {
 p {
 	margin-top: 0.8em;
 	margin-bottom: 0.8em;
+}
+ul {
+	list-style: disc;
 }
 .content {
 	width: 640px;

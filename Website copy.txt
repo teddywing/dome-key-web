@@ -1,0 +1,76 @@
+DomeKey lets you customise headphone buttons 
+
+---
+
+DomeKey gives you the power to control your computer using [just] your headphones.
+
+* [Simulate] keyboard keys buttons to 
+
+
+---
+
+Control your computer with a pair of headphones
+
+DomeKey gives you the power to remap your headphone buttons to any action you
+can think of. With up to three new button inputs, the possibilities are endless.
+
+* Simulate keyboard keys to control applications or automate actions
+* Run shell commands at the press of a button
+* Trigger an action with more than one headphone button and add modes to []
+  as many actions as you need
+
+---
+
+Control your computer with a pair of headphones
+
+DomeKey gives you the power to remap your headphone buttons to any action you
+can think of. Define mappings in text using a Vim-like configuration language.
+With up to three new button inputs, the possibilities are endless.
+
+* Simulate keyboard keys to control applications or automate actions
+* Run shell commands at the press of a button
+* Trigger an action with more than one headphone button and add modes to define
+  as many actions as you need
+
+---
+
+Control your computer with a pair of headphones
+
+DomeKey gives you the power to remap your headphone buttons to any action you
+can think of. Define mappings in text using a Vim-like configuration language.
+With up to three new button inputs, the possibilities are endless.
+
+* Simulate keyboard keys to control applications or automate actions
+* Run shell commands at the press of a button
+* Trigger an action using a sequence of headphone buttons and add modes to
+  define as many actions as you need
+
+---
+
+Control your computer with a pair of headphones
+
+DomeKey gives you the power to remap your headphone buttons to any action you
+can think of. Define mappings in text using a Vim-like configuration language.
+With up to three new button inputs, the possibilities are endless.
+
+* Simulate keyboard keys to control applications or automate actions
+* Run shell commands at the press of a button
+* Define as many actions as you need by adding modes, or triggering an action
+  with a sequence of headphone buttons
+
+---
+
+Control your computer with a pair of headphones
+
+DomeKey gives you the power to remap your headphone buttons to any action you
+can think of. Define mappings in text using a Vim-like configuration language.
+
+* Simulate keyboard keys to control applications or automate actions
+* Run shell commands at the press of a button
+* Define as many actions as you need by adding modes, or triggering an action
+  with a sequence of headphone buttons
+
+With up to three new button inputs, the possibilities are endless.
+
+
+ vim:tw=80:
