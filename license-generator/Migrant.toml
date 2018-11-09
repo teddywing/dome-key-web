@@ -1,0 +1,10 @@
+database_type = "mysql"
+
+database_name = "env:DATABASE_NAME"
+database_user = "env:DATABASE_USER"
+database_password = "env:DATABASE_PASSWORD"
+
+database_host = "env:DATABASE_HOST"  # default "localhost"
+database_port = "env:DATABASE_PORT"  # default "3306"
+
+[database_params]
