@@ -1,0 +1,39 @@
+#!/bin/sh
+
+function program_exists () {
+	local program="$1"
+
+	command -v "$program" > /dev/null
+}
+
+function install_if_not_found () {
+	local program="$1"
+
+	if ! program_exists "$1"; then
+		brew install "$program"
+	fi
+}
+
+if [ "$1" = "--install" ]; then
+	if ! program_exists hasp; then
+		mkdir /usr/local/Cellar/hasp
+		git clone https://github.com/djanowski/hasp.git /usr/local/Cellar/hasp/HEAD
+		brew link hasp
+	fi
+
+	install_if_not_found golang-migrate
+
+	if ! program_exists mysql; then
+		brew install mariadb
+	fi
+fi
+
+
+if [ ! -f .env ]; then
+	cp .env.sample .env
+fi
+
+
+vim .env
+source .env
+migrate-up
