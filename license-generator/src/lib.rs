@@ -33,11 +33,6 @@ impl<'a> Purchaser<'a> {
         }
     }
 
-    fn with_secret(mut self, secret: String) -> Self {
-        self.secret = Some(secret);
-        self
-    }
-
     fn generate_secret(&mut self) {
         let mut rng = rand::thread_rng();
         let random: usize = rng.gen_range(1_000_000_000, std::usize::MAX);
