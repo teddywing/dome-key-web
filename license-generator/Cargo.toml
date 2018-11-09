@@ -4,6 +4,7 @@ version = "0.0.1"
 
 [dependencies]
 fastcgi = "1.0.0"
+mysql = "14.1.1"
 
 [workspace]
 members = [
