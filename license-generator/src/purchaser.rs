@@ -61,6 +61,8 @@ impl<'a> Purchaser<'a> {
             },
         }
 
+        tx.commit()?;
+
         Ok(())
     }
 }
