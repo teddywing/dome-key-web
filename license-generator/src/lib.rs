@@ -14,6 +14,8 @@ mod errors {
     }
 }
 
+use rand::Rng;
+
 use errors::*;
 
 struct Purchaser<'a> {
@@ -37,7 +39,8 @@ impl<'a> Purchaser<'a> {
     }
 
     fn generate_secret(&mut self) {
-        let random: usize = rand::random();
+        let mut rng = rand::thread_rng();
+        let random: usize = rng.gen_range(1_000_000_000, std::usize::MAX);
 
         let source = format!("{}{}{}", self.name, self.email, random);
         let digest = sha1::Sha1::from(source).hexdigest();
