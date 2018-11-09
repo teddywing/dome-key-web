@@ -1,0 +1,16 @@
+SetEnv LOG_FILE "license_generator.log"
+SetEnv DATABASE_URL "mysql://localhost:3306/dome_key"
+
+
+ErrorDocument 404 /404.html
+
+
+RewriteEngine on
+
+RewriteRule /?\.htaccess$ - [F,L]
+
+RewriteRule ^(license-generator) license-generator.fcgi [L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([^\.]+)$ $1.html [L]
