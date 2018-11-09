@@ -12,11 +12,15 @@ struct Purchaser<'a> {
 
 impl<'a> Purchaser<'a> {
     fn new(name: &'a str, email: &'a str) -> Self {
-        Purchaser {
+        let mut purchaser = Purchaser {
             name: name,
             email: email,
             secret: None,
-        }
+        };
+
+        purchaser.generate_secret();
+
+        purchaser
     }
 
     fn generate_secret(&mut self) {
