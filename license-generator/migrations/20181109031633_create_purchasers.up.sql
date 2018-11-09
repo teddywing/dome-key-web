@@ -9,13 +9,9 @@ CREATE TABLE purchasers (
     updated_at DATETIME NOT NULL DEFAULT UTC_TIMESTAMP()
 );
 
-DELIMITER $$
-    CREATE TRIGGER purchasers_updated_at
+CREATE TRIGGER purchasers_updated_at
     BEFORE UPDATE
     ON purchasers FOR EACH ROW
-    BEGIN
         SET NEW.updated_at = UTC_TIMESTAMP();
-    END$$
-DELIMITER ;
 
 COMMIT;
