@@ -1,0 +1,21 @@
+BEGIN;
+
+CREATE TABLE purchasers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    secret VARCHAR(255),
+    created_at DATETIME NOT NULL DEFAULT UTC_TIMESTAMP(),
+    updated_at DATETIME NOT NULL DEFAULT UTC_TIMESTAMP()
+);
+
+DELIMITER $$
+    CREATE TRIGGER purchasers_updated_at
+    BEFORE UPDATE
+    ON purchasers FOR EACH ROW
+    BEGIN
+        SET NEW.updated_at = UTC_TIMESTAMP();
+    END$$
+DELIMITER ;
+
+COMMIT;
