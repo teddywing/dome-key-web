@@ -8,4 +8,4 @@ extern crate sha1;
 
 pub mod database;
 pub mod errors;
-mod purchaser;
+pub mod purchaser;

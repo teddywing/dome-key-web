@@ -15,6 +15,7 @@ use simplelog::{Config, LevelFilter, WriteLogger};
 
 use license_generator::database;
 use license_generator::errors::*;
+use license_generator::purchaser::Purchaser;
 
 fn main() -> Result<()> {
     let log_file_path = env::var("LOG_FILE")?;
@@ -26,7 +27,7 @@ fn main() -> Result<()> {
 
     WriteLogger::init(LevelFilter::Info, Config::default(), log_file)?;
 
-    let cx = match database::get_database_connection()
+    let mut cx = match database::get_database_connection()
         .chain_err(|| "failed to create a database connection")
     {
         Ok(cx) => cx,
@@ -35,6 +36,12 @@ fn main() -> Result<()> {
             return Err(e);
         },
     };
+
+    let test_purchaser = Purchaser::new("Shiki", "shiki@example.com");
+    match test_purchaser.insert(&mut cx) {
+        Ok(_) => (),
+        Err(e) => error!("{}", e),
+    }
 
     fastcgi::run(|mut req| {
         write!(&mut req.stdout(), "Content-Type: text/plain\n\nHello, world!")

@@ -4,14 +4,14 @@ use sha1;
 
 use errors::*;
 
-struct Purchaser<'a> {
+pub struct Purchaser<'a> {
     name: &'a str,
     email: &'a str,
     secret: Option<String>,
 }
 
 impl<'a> Purchaser<'a> {
-    fn new(name: &'a str, email: &'a str) -> Self {
+    pub fn new(name: &'a str, email: &'a str) -> Self {
         let mut purchaser = Purchaser {
             name: name,
             email: email,
@@ -33,7 +33,7 @@ impl<'a> Purchaser<'a> {
         self.secret = Some(digest);
     }
 
-    fn insert(&self, cx: &mut mysql::PooledConn) -> Result<()> {
+    pub fn insert(&self, cx: &mut mysql::PooledConn) -> Result<()> {
         let mut tx = cx.start_transaction(
             false,  // consistent_snapshot
             None,   // isolation_level
