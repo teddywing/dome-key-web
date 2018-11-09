@@ -3,7 +3,13 @@ extern crate error_chain;
 extern crate mysql;
 
 mod errors {
-    error_chain! {}
+    use mysql;
+
+    error_chain! {
+        foreign_links {
+            MySql(mysql::error::Error);
+        }
+    }
 }
 
 use errors::*;
@@ -28,7 +34,21 @@ impl<'a> Purchaser<'a> {
         self
     }
 
-    fn insert() -> Result<()> {
-        unimplemented!()
+    fn insert(&self, cx: &mut mysql::Conn) -> Result<()> {
+        let mut tx = cx.start_transaction(
+            false,  // consistent_snapshot
+            None,   // isolation_level
+            None,   // readonly
+        )?;
+
+        tx.prep_exec("
+            INSERT INTO purchasers
+                (name, email, secret)
+                VALUES
+                (?, ?, ?)",
+            (self.name, self.email, self.secret),
+        )?;
+
+        Ok(())
     }
 }
