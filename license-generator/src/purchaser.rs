@@ -29,7 +29,7 @@ impl<'a> Purchaser<'a> {
         self.secret = Some(digest);
     }
 
-    fn insert(&self, cx: &mut mysql::Conn) -> Result<()> {
+    fn insert(&self, cx: &mut mysql::PooledConn) -> Result<()> {
         let mut tx = cx.start_transaction(
             false,  // consistent_snapshot
             None,   // isolation_level

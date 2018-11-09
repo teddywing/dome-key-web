@@ -5,5 +5,6 @@ extern crate rand;
 extern crate sha1;
 
 
+mod database;
 mod errors;
 mod purchaser;
