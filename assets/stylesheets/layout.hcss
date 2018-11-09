@@ -1,6 +1,6 @@
 body {
-	background-color: #e3ce88;
-	color: #222;
+	background-color: DESERT;
+	color: BLACK;
 
 	font: 19px "Georgia", serif;
 	line-height: 1.65em;
@@ -35,13 +35,13 @@ ul {
 	padding: 12px 16px;
 	overflow: auto;
 
-    border: solid 2px #8c6e6e;
+    border: solid 2px HAAGEN_DASZ_BLACK_RASPBERRY;
 	border-radius: 6px;
-	box-shadow: inset 1px 1px 10px #402929;
+	box-shadow: inset 1px 1px 10px MILK_CHOCOLATE;
 
-	background-color: #2d1f1c;
-	color: #c9ccb4;
-	text-shadow: 1px 3px 5px #230f0f;
+	background-color: DRIP_COFFEE;
+	color: LIMEADE;
+	text-shadow: 1px 3px 5px DARK_CHOCOLATE;
 }
 
 .margin-bottom-1\.8 {
