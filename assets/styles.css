@@ -19,6 +19,12 @@ h2 {
 .font-size-1\.52 {
 	font-size: 1.52em;
 }
+.font-size-15 {
+	font-size: 15em;
+}
+.text-center {
+	text-align: center;
+}
 a:link { color: #b71863; }
 a:hover { color: #880442; }
 body {
@@ -55,6 +61,12 @@ ul {
 	background-color: #2d1f1c;
 	color: #c9ccb4;
 	text-shadow: 1px 3px 5px #230f0f;
+}
+.margin-top-0\.5 {
+	margin-top: 0.5em;
+}
+.margin-bottom-0\.63 {
+	margin-bottom: 0.63em;
 }
 .margin-bottom-1\.8 {
 	margin-bottom: 1.8em;

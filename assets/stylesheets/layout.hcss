@@ -44,6 +44,14 @@ ul {
 	text-shadow: 1px 3px 5px DARK_CHOCOLATE;
 }
 
+.margin-top-0\.5 {
+	margin-top: 0.5em;
+}
+
+.margin-bottom-0\.63 {
+	margin-bottom: 0.63em;
+}
+
 .margin-bottom-1\.8 {
 	margin-bottom: 1.8em;
 }
