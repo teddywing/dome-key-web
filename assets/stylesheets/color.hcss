@@ -1,3 +1,5 @@
+set(BURGUNDY, #b71863)
+set(BURGUNDY_DARK, #880442)
 set(MURKY_POND, #91947f)
 
 .color-murky-pond {

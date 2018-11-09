@@ -1,2 +1,2 @@
-a:link { color: #b71863; }
-a:hover { color: #880442; }
+a:link { color: BURGUNDY; }
+a:hover { color: BURGUNDY_DARK; }
