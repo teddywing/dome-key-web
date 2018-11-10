@@ -17,6 +17,7 @@ use license_generator::database;
 use license_generator::errors::*;
 use license_generator::purchaser::Purchaser;
 use license_generator::request;
+use license_generator::response;
 
 fn main() -> Result<()> {
     let log_file_path = env::var("LOG_FILE")
@@ -48,23 +49,75 @@ fn main() -> Result<()> {
     }
 
     fastcgi::run(|mut req| {
-        write!(&mut req.stdout(), "Content-Type: text/plain\n\nHello, world!")
-            .unwrap_or(());
+        match req.param("REQUEST_METHOD") {
+            Some(method) => {
+                if method != "POST" {
+                    response::set_405(&mut req.stdout(), "POST")
+                        .unwrap_or(());
+                    write!(&mut req.stdout(), "Content-Type: text/plain
 
-        let mut params = String::new();
-        for (key, val) in req.params() {
-            params.push_str(format!("{}: {}\n", key, val).as_str());
-        }
+405 Method Not Allowed")
+                        .unwrap_or(());
 
-        info!("{}", params);
+                    return;
+                }
+            },
+            None => {
+                response::set_500(&mut req.stdout()).unwrap_or(());
+                write!(&mut req.stdout(), "Content-Type: text/plain
+
+500 Internal Server Error")
+                    .unwrap_or(());
+
+                    return;
+            },
+        };
 
         let mut stdin = String::new();
-        req.stdin().read_to_string(&mut stdin).unwrap();
+        match req.stdin().read_to_string(&mut stdin) {
+            Ok(_) => (),
+            Err(e) => {
+                error!("{}", e);
 
-        info!("{}", stdin);
+                response::set_500(&mut req.stdout()).unwrap_or(());
+                write!(&mut req.stdout(), "Content-Type: text/plain
 
-        let is_verified = request::verified(&stdin);
-        info!("{:?}", is_verified);
+500 Internal Server Error")
+                    .unwrap_or(());
+
+                return;
+            },
+        }
+
+        let is_verified = match request::verified(&stdin) {
+            Ok(v) => v,
+            Err(e) => {
+                error!("{}", e);
+
+                response::set_500(&mut req.stdout()).unwrap_or(());
+                write!(&mut req.stdout(), "Content-Type: text/plain
+
+500 Internal Server Error")
+                    .unwrap_or(());
+
+                return;
+            },
+        };
+
+        if !is_verified {
+            response::set_403(&mut req.stdout()).unwrap_or(());
+            write!(&mut req.stdout(), "Content-Type: text/plain
+
+403 Forbidden: Invalid request signature")
+                .unwrap_or(());
+
+            return;
+        }
+
+        write!(&mut req.stdout(), "Content-Type: text/plain
+
+200 OK")
+            .unwrap_or(());
     });
 
     Ok(())
