@@ -36,11 +36,11 @@ where
     let rsa = Rsa::public_key_from_pem(pem)?;
     let pkey = PKey::from_rsa(rsa)?;
     let mut verifier = Verifier::new(MessageDigest::sha1(), &pkey)?;
-    verifier.update(signature)?;
 
-    let signature = php_serialize(params);
+    let digest = php_serialize(params);
+    verifier.update(digest.as_bytes())?;
 
-    Ok(verifier.verify(signature.as_ref())?)
+    Ok(verifier.verify(signature)?)
 }
 
 fn php_serialize<'a, S, I>(pairs: I) -> String
