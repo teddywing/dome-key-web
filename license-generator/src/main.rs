@@ -19,6 +19,27 @@ use license_generator::purchaser::Purchaser;
 use license_generator::request;
 use license_generator::response;
 
+fn log_request(req: &fastcgi::Request, post_params: &str) {
+    info!(
+        "{method} {path} {query} - {protocol} - {user_agent} - {remote_addr} | {forwarded_for} / {post_params}",
+        method = req.param("REQUEST_METHOD")
+            .unwrap_or("REQUEST_METHOD".into()),
+        path = req.param("SCRIPT_NAME")
+            .unwrap_or("SCRIPT_NAME".into()),
+        query = req.param("QUERY_STRING")
+            .unwrap_or("QUERY_STRING".into()),
+        protocol = req.param("SERVER_PROTOCOL")
+            .unwrap_or("SERVER_PROTOCOL".into()),
+        user_agent = req.param("HTTP_USER_AGENT")
+            .unwrap_or("HTTP_USER_AGENT".into()),
+        remote_addr = req.param("REMOTE_ADDR")
+            .unwrap_or("REMOTE_ADDR".into()),
+        forwarded_for = req.param("HTTP_X_FORWARDED_FOR")
+            .unwrap_or("HTTP_X_FORWARDED_FOR".into()),
+        post_params = post_params,
+    );
+}
+
 fn main() -> Result<()> {
     let log_file_path = env::var("LOG_FILE")
         .chain_err(|| "LOG_FILE environment variable not found")?;
@@ -49,6 +70,11 @@ fn main() -> Result<()> {
     }
 
     fastcgi::run(|mut req| {
+        let mut params = String::new();
+        req.stdin().read_to_string(&mut params).unwrap_or(0);
+
+        log_request(&req, &params);
+
         match req.param("REQUEST_METHOD") {
             Some(method) => {
                 if method != "POST" {
@@ -73,23 +99,7 @@ fn main() -> Result<()> {
             },
         };
 
-        let mut stdin = String::new();
-        match req.stdin().read_to_string(&mut stdin) {
-            Ok(_) => (),
-            Err(e) => {
-                error!("{}", e);
-
-                response::set_500(&mut req.stdout()).unwrap_or(());
-                write!(&mut req.stdout(), "Content-Type: text/plain
-
-500 Internal Server Error")
-                    .unwrap_or(());
-
-                return;
-            },
-        }
-
-        let is_verified = match request::verified(&stdin) {
+        let is_verified = match request::verified(&params) {
             Ok(v) => v,
             Err(e) => {
                 error!("{}", e);
