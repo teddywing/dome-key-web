@@ -1,13 +1,23 @@
+extern crate base64;
+
 #[macro_use]
 extern crate error_chain;
 extern crate openssl;
 
 pub mod errors {
+    use base64;
     use openssl;
 
     error_chain! {
         foreign_links {
+            Base64(base64::DecodeError);
             Openssl(openssl::error::ErrorStack);
+        }
+
+        errors {
+            SignatureNotFound {
+                display("no signature could be found in params")
+            }
         }
     }
 }
@@ -26,21 +36,29 @@ use errors::*;
 // https://paddle.com/docs/reference-verifying-webhooks/
 pub fn verify_signature<'a, S, I>(
     pem: &[u8],
-    signature: &[u8],
     params: I,
 ) -> Result<bool>
 where
-    S: AsRef<str> + Deref<Target = str> + Display,
+    S: AsRef<str> + Deref<Target = str> + PartialEq<str> + PartialOrd + Display,
     I: IntoIterator<Item = (S, S)> + PartialOrd,
 {
     let rsa = Rsa::public_key_from_pem(pem)?;
     let pkey = PKey::from_rsa(rsa)?;
     let mut verifier = Verifier::new(MessageDigest::sha1(), &pkey)?;
 
+    let (signature_params, params): (Vec<_>, Vec<_>) = params
+        .into_iter()
+        .partition(|(k, _v)| k == "p_signature");
+    let signature = &signature_params
+        .first()
+        .ok_or(ErrorKind::SignatureNotFound)?
+        .1;
+    let signature = base64::decode(signature.as_bytes())?;
+
     let digest = php_serialize(params);
     verifier.update(digest.as_bytes())?;
 
-    Ok(verifier.verify(signature)?)
+    Ok(verifier.verify(&signature)?)
 }
 
 fn php_serialize<'a, S, I>(pairs: I) -> String
