@@ -1,5 +1,8 @@
 extern crate openssl;
 
+use std::fmt::Display;
+use std::ops::Deref;
+
 use openssl::hash::MessageDigest;
 use openssl::pkey::PKey;
 use openssl::rsa::Rsa;
@@ -7,8 +10,11 @@ use openssl::sign::Verifier;
 
 
 // https://paddle.com/docs/reference-verifying-webhooks/
-fn verify_signature<'a, I>(pem: &[u8], signature: &str, params: I) -> bool
-where I: IntoIterator<Item = (&'a str, &'a str)> + PartialOrd {
+pub fn verify_signature<'a, S, I>(pem: &[u8], signature: &str, params: I) -> bool
+where
+    S: AsRef<str> + Deref<Target = str> + Display,
+    I: IntoIterator<Item = (S, S)> + PartialOrd,
+{
     let rsa = Rsa::public_key_from_pem(pem).unwrap();
     let pkey = PKey::from_rsa(rsa).unwrap();
     let mut verifier = Verifier::new(MessageDigest::sha1(), &pkey).unwrap();
@@ -19,8 +25,11 @@ where I: IntoIterator<Item = (&'a str, &'a str)> + PartialOrd {
     verifier.verify(signature.as_ref()).unwrap()
 }
 
-fn php_serialize<'a, I>(pairs: I) -> String
-where I: IntoIterator<Item = (&'a str, &'a str)> + PartialOrd {
+fn php_serialize<'a, S, I>(pairs: I) -> String
+where
+    S: AsRef<str> + Deref<Target = str> + Display,
+    I: IntoIterator<Item = (S, S)> + PartialOrd,
+{
     let mut serialized = String::with_capacity(500);
 
     let mut len = 0;
@@ -28,9 +37,9 @@ where I: IntoIterator<Item = (&'a str, &'a str)> + PartialOrd {
         serialized.push_str(
             &format!(
                 "s:{key_length}:\"{key}\";s:{value_length}:\"{value}\";",
-                key_length = key.len(),
+                key_length = key.chars().count(),
                 key = key,
-                value_length = value.len(),
+                value_length = value.chars().count(),
                 value = value
             )
         );
