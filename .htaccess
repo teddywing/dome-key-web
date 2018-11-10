@@ -1,11 +1,13 @@
 SetEnv LOG_FILE "license_generator.log"
 SetEnv DATABASE_URL "mysql://localhost:3306/dome_key"
 
-
 ErrorDocument 404 /404.html
 
 
 RewriteEngine on
+
+RewriteCond %{HTTPS} != on
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
 RewriteRule /?\.htaccess$ - [F,L]
 
