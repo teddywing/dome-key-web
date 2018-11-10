@@ -26,7 +26,7 @@ use errors::*;
 // https://paddle.com/docs/reference-verifying-webhooks/
 pub fn verify_signature<'a, S, I>(
     pem: &[u8],
-    signature: &str,
+    signature: &[u8],
     params: I,
 ) -> Result<bool>
 where
@@ -36,7 +36,7 @@ where
     let rsa = Rsa::public_key_from_pem(pem)?;
     let pkey = PKey::from_rsa(rsa)?;
     let mut verifier = Verifier::new(MessageDigest::sha1(), &pkey)?;
-    verifier.update(signature.as_bytes())?;
+    verifier.update(signature)?;
 
     let signature = php_serialize(params);
 
