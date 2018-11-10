@@ -27,7 +27,9 @@ fn main() -> Result<()> {
         .create(true)
         .open(log_file_path)?;
 
-    WriteLogger::init(LevelFilter::Info, Config::default(), log_file)?;
+    let mut log_config = Config::default();
+    log_config.time_format = Some("%+");
+    WriteLogger::init(LevelFilter::Info, log_config, log_file)?;
 
     let mut cx = match database::get_database_connection()
         .chain_err(|| "failed to create a database connection")
