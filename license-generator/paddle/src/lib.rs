@@ -1,4 +1,16 @@
+#[macro_use]
+extern crate error_chain;
 extern crate openssl;
+
+pub mod errors {
+    use openssl;
+
+    error_chain! {
+        foreign_links {
+            Openssl(openssl::error::ErrorStack);
+        }
+    }
+}
 
 use std::fmt::Display;
 use std::ops::Deref;
@@ -8,21 +20,27 @@ use openssl::pkey::PKey;
 use openssl::rsa::Rsa;
 use openssl::sign::Verifier;
 
+use errors::*;
+
 
 // https://paddle.com/docs/reference-verifying-webhooks/
-pub fn verify_signature<'a, S, I>(pem: &[u8], signature: &str, params: I) -> bool
+pub fn verify_signature<'a, S, I>(
+    pem: &[u8],
+    signature: &str,
+    params: I,
+) -> Result<bool>
 where
     S: AsRef<str> + Deref<Target = str> + Display,
     I: IntoIterator<Item = (S, S)> + PartialOrd,
 {
-    let rsa = Rsa::public_key_from_pem(pem).unwrap();
-    let pkey = PKey::from_rsa(rsa).unwrap();
-    let mut verifier = Verifier::new(MessageDigest::sha1(), &pkey).unwrap();
-    verifier.update(signature.as_bytes()).unwrap();
+    let rsa = Rsa::public_key_from_pem(pem)?;
+    let pkey = PKey::from_rsa(rsa)?;
+    let mut verifier = Verifier::new(MessageDigest::sha1(), &pkey)?;
+    verifier.update(signature.as_bytes())?;
 
     let signature = php_serialize(params);
 
-    verifier.verify(signature.as_ref()).unwrap()
+    Ok(verifier.verify(signature.as_ref())?)
 }
 
 fn php_serialize<'a, S, I>(pairs: I) -> String
