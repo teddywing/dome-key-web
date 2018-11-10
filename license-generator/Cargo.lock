@@ -286,6 +286,7 @@ dependencies = [
  "fastcgi 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "log 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "mysql 14.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "paddle 0.0.1",
  "rand 0.5.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "sha1 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "simplelog 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)",

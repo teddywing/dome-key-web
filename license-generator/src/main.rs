@@ -15,8 +15,8 @@ use simplelog::{Config, LevelFilter, WriteLogger};
 
 use license_generator::database;
 use license_generator::errors::*;
-use license_generator::params;
 use license_generator::purchaser::Purchaser;
+use license_generator::request;
 
 fn main() -> Result<()> {
     let log_file_path = env::var("LOG_FILE")
@@ -63,8 +63,8 @@ fn main() -> Result<()> {
         write!(&mut req.stdout(), "\n\nstdin: {}\n", stdin)
             .unwrap_or(());
 
-        let p = params::parse(&stdin);
-        write!(&mut req.stdout(), "\n{:?}\n", p)
+        let is_verified = request::verified(&stdin);
+        write!(&mut req.stdout(), "\n{:?}\n", is_verified)
             .unwrap_or(());
     });
 
