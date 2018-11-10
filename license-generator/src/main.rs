@@ -71,7 +71,10 @@ fn main() -> Result<()> {
 
     fastcgi::run(|mut req| {
         let mut params = String::new();
-        req.stdin().read_to_string(&mut params).unwrap_or(0);
+        match req.stdin().read_to_string(&mut params) {
+            Ok(_) => (),
+            Err(e) => error!("{}", e),
+        }
 
         log_request(&req, &params);
 
