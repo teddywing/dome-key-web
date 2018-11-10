@@ -10,6 +10,7 @@ mysql = "14.1.1"
 rand = "0.5.5"
 sha1 = { version = "0.6.0", features = ["std"] }
 simplelog = "0.5.3"
+url = "1.7.2"
 
 [workspace]
 members = [

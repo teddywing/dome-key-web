@@ -15,6 +15,7 @@ use simplelog::{Config, LevelFilter, WriteLogger};
 
 use license_generator::database;
 use license_generator::errors::*;
+use license_generator::params;
 use license_generator::purchaser::Purchaser;
 
 fn main() -> Result<()> {
@@ -60,6 +61,10 @@ fn main() -> Result<()> {
         req.stdin().read_to_string(&mut stdin).unwrap();
 
         write!(&mut req.stdout(), "\n\nstdin: {}\n", stdin)
+            .unwrap_or(());
+
+        let p = params::parse(&stdin);
+        write!(&mut req.stdout(), "\n{:?}\n", p)
             .unwrap_or(());
     });
 
