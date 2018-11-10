@@ -18,7 +18,8 @@ use license_generator::errors::*;
 use license_generator::purchaser::Purchaser;
 
 fn main() -> Result<()> {
-    let log_file_path = env::var("LOG_FILE")?;
+    let log_file_path = env::var("LOG_FILE")
+        .chain_err(|| "LOG_FILE environment variable not found")?;
 
     let log_file = OpenOptions::new()
         .append(true)
