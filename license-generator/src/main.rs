@@ -104,19 +104,19 @@ fn main() -> Result<()> {
             },
         };
 
-        if !is_verified {
-            response::set_403(&mut req.stdout()).unwrap_or(());
+        if is_verified {
             write!(&mut req.stdout(), "Content-Type: text/plain
 
-403 Forbidden: Invalid request signature")
+    200 OK")
                 .unwrap_or(());
 
             return;
         }
 
+        response::set_403(&mut req.stdout()).unwrap_or(());
         write!(&mut req.stdout(), "Content-Type: text/plain
 
-200 OK")
+403 Forbidden: Invalid request signature")
             .unwrap_or(());
     });
 
