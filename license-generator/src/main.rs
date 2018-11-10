@@ -54,18 +54,15 @@ fn main() -> Result<()> {
             params.push_str(format!("{}: {}\n", key, val).as_str());
         }
 
-        write!(&mut req.stdout(), "\n\n{}", params)
-            .unwrap_or(());
+        info!("{}", params);
 
         let mut stdin = String::new();
         req.stdin().read_to_string(&mut stdin).unwrap();
 
-        write!(&mut req.stdout(), "\n\nstdin: {}\n", stdin)
-            .unwrap_or(());
+        info!("{}", stdin);
 
         let is_verified = request::verified(&stdin);
-        write!(&mut req.stdout(), "\n{:?}\n", is_verified)
-            .unwrap_or(());
+        info!("{:?}", is_verified);
     });
 
     Ok(())
