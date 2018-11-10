@@ -1,3 +1,5 @@
+extern crate base64;
+
 #[macro_use]
 extern crate error_chain;
 extern crate log;

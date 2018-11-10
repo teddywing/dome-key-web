@@ -1,3 +1,4 @@
+use base64;
 use paddle;
 
 use errors::*;
@@ -9,7 +10,10 @@ pub fn verified(req_params: &str) -> Result<bool> {
     let pem = include_bytes!("../private/paddle.pubkey.asc");
 
     match signature {
-        Some(signature) => Ok(paddle::verify_signature(pem, &signature, p)?),
+        Some(signature) => {
+            let signature = base64::decode(signature.as_bytes())?;
+            Ok(paddle::verify_signature(pem, &signature, p)?)
+        },
         None => Ok(false),
     }
 }
