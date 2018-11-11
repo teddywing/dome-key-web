@@ -15,6 +15,7 @@ serde = "1.0.80"
 serde_derive = "1.0.80"
 simplelog = "0.5.3"
 url = "1.7.2"
+zip = "0.4.2"
 
 [workspace]
 members = [

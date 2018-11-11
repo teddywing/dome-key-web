@@ -1,6 +1,7 @@
 use log;
 use mysql;
 use paddle;
+use zip_lib;
 
 error_chain! {
     foreign_links {
@@ -9,6 +10,7 @@ error_chain! {
 
         Log(log::SetLoggerError);
         MySql(mysql::error::Error);
+        Zip(zip_lib::result::ZipError);
 
         Paddle(paddle::errors::Error);
     }
