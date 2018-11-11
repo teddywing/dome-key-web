@@ -46,7 +46,7 @@ a.button-magenta {
 	background: linear-gradient(to bottom, #f11c9c 0%,#c91a7d 76%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f11c9c', endColorstr='#c91a7d',GradientType=0 ); /* IE6-9 */
 	color: #ffd7d7;
-	text-shadow: 0px -1px 2px #161c1f;
+	text-shadow: 0px -1px 1px #161c1f;
 }
 a.button-magenta:hover {
 	border-color: #9e0e6a;
