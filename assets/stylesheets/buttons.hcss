@@ -1,6 +1,8 @@
-a.button {
+.button {
 	padding: 13px 15px;
+}
 
+a.button {
 	border: 1px solid;
 	border-radius: 10px;
 
