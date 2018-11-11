@@ -15,6 +15,7 @@ use simplelog::{Config, LevelFilter, WriteLogger};
 
 use license_generator::database;
 use license_generator::errors::*;
+use license_generator::params;
 use license_generator::purchaser::Purchaser;
 use license_generator::request;
 use license_generator::response;
@@ -102,7 +103,8 @@ fn main() -> Result<()> {
             },
         };
 
-        let is_verified = match request::verified(&params) {
+        let ps = params::parse(&params);
+        let is_verified = match request::verified(&ps) {
             Ok(v) => v,
             Err(e) => {
                 error!("{}", e);

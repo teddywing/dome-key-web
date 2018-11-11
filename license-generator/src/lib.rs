@@ -8,10 +8,9 @@ extern crate sha1;
 extern crate url;
 
 
-mod params;
-
 pub mod database;
 pub mod errors;
+pub mod params;
 pub mod purchaser;
 pub mod request;
 pub mod response;
