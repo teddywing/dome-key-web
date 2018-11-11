@@ -64,7 +64,7 @@ fn main() -> Result<()> {
         },
     };
 
-    fastcgi::run(|mut req| {
+    fastcgi::run(move |mut req| {
         let mut params = String::new();
         match req.stdin().read_to_string(&mut params) {
             Ok(_) => (),
