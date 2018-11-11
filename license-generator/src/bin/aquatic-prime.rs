@@ -5,8 +5,11 @@ extern crate serde;
 extern crate serde_derive;
 
 use std::env;
+use std::process;
 
 use aquatic_prime::AquaticPrime;
+
+const EX_USAGE: i32 = 64;
 
 #[derive(Serialize)]
 struct LicenseData<'a> {
@@ -19,6 +22,11 @@ struct LicenseData<'a> {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
+
+    if args.len() != 5 {
+        println!("Usage: aquatic-prime PUBLIC_KEY PRIVATE_KEY NAME EMAIL");
+        process::exit(EX_USAGE);
+    }
 
     let aquatic_prime = AquaticPrime::new(&args[1], &args[2]);
 
