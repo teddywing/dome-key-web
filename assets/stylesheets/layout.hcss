@@ -87,3 +87,34 @@ ul {
 	color: LIMEADE;
 	text-shadow: 1px 3px 5px DARK_CHOCOLATE;
 }
+
+
+@media screen and (max-width: 767px) {
+	header {
+		margin-left: -8px;
+	}
+
+	.content {
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+
+@media screen and (max-width: 710px) {
+	ul {
+		margin-left: 2.5em;
+	}
+}
+
+@media screen and (max-width: 669px) {
+	.content {
+		width: 96%;
+	}
+}
+
+@media screen and (max-width: 481px) {
+	.buy-button {
+		position: static;
+		display: inline-block;
+	}
+}
