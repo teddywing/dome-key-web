@@ -76,14 +76,7 @@ fn main() -> Result<()> {
         match req.param("REQUEST_METHOD") {
             Some(method) => {
                 if method != "POST" {
-                    response::set_405(&mut req.stdout(), "POST")
-                        .unwrap_or(());
-                    write!(&mut req.stdout(), "Content-Type: text/plain
-
-405 Method Not Allowed")
-                        .unwrap_or(());
-
-                    return;
+                    return response::error_405(&mut req.stdout(), "POST");
                 }
             },
             None => {
@@ -139,11 +132,10 @@ fn main() -> Result<()> {
             );
         }
 
-        response::set_403(&mut req.stdout()).unwrap_or(());
-        write!(&mut req.stdout(), "Content-Type: text/plain
-
-403 Forbidden: Invalid request signature")
-            .unwrap_or(());
+        response::error_403(
+            &mut req.stdout(),
+            Some("Invalid request signature")
+        );
     });
 
     Ok(())
