@@ -10,6 +10,10 @@ set(MAROON, #4e0303)
 set(MILK_CHOCOLATE, #402929)
 set(MURKY_POND, #91947f)
 
+.color-maroon {
+	color: MAROON;
+}
+
 .color-murky-pond {
 	color: MURKY_POND;
 }
