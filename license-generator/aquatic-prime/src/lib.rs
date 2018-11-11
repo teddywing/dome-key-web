@@ -11,7 +11,7 @@ extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 
-mod errors {
+pub mod errors {
     use plist;
 
     error_chain! {
@@ -46,13 +46,20 @@ use serde::ser::Serialize;
 
 use errors::*;
 
-struct AquaticPrime<'a> {
+pub struct AquaticPrime<'a> {
     public_key: &'a str,
     private_key: &'a str,
 }
 
 impl<'a> AquaticPrime<'a> {
-    fn sign(&self, input_data: HashMap<String, String>) -> Result<[u8; 128]> {
+    pub fn new(public_key: &'a str, private_key: &'a str) -> Self {
+        AquaticPrime {
+            public_key: public_key,
+            private_key: private_key,
+        }
+    }
+
+    pub fn sign(&self, input_data: HashMap<String, String>) -> Result<[u8; 128]> {
         let mut input_data: Vec<(String, String)> = input_data
             .into_iter()
             .collect();
@@ -101,7 +108,7 @@ impl<'a> AquaticPrime<'a> {
         Ok(signature)
     }
 
-    fn plist<T: Serialize>(&self, input_data: T) -> Result<String> {
+    pub fn plist<T: Serialize>(&self, input_data: T) -> Result<String> {
         // Get input as `Plist`
         let mut xml_for_plist = Vec::with_capacity(600);
 
