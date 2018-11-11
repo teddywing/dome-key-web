@@ -87,13 +87,7 @@ fn main() -> Result<()> {
                 }
             },
             None => {
-                response::set_500(&mut req.stdout()).unwrap_or(());
-                write!(&mut req.stdout(), "Content-Type: text/plain
-
-500 Internal Server Error")
-                    .unwrap_or(());
-
-                    return;
+                return response::error_500(&mut req.stdout(), None);
             },
         };
 
@@ -101,15 +95,7 @@ fn main() -> Result<()> {
         let is_verified = match request::verified(&ps) {
             Ok(v) => v,
             Err(e) => {
-                error!("{}", e);
-
-                response::set_500(&mut req.stdout()).unwrap_or(());
-                write!(&mut req.stdout(), "Content-Type: text/plain
-
-500 Internal Server Error")
-                    .unwrap_or(());
-
-                return;
+                return response::error_500(&mut req.stdout(), Some(e));
             },
         };
 
@@ -123,15 +109,10 @@ fn main() -> Result<()> {
                 let mut cx = match pool.get_conn() {
                     Ok(cx) => cx,
                     Err(e) => {
-                        error!("{}", e);
-
-                        response::set_500(&mut req.stdout()).unwrap_or(());
-                        write!(&mut req.stdout(), "Content-Type: text/plain
-
-500 Internal Server Error")
-                            .unwrap_or(());
-
-                        return;
+                        return response::error_500(
+                            &mut req.stdout(),
+                            Some(e.into())
+                        );
                     },
                 };
 
@@ -147,28 +128,15 @@ fn main() -> Result<()> {
                         return;
                     },
                     Err(e) => {
-                        error!("{}", e);
-
-                        response::set_500(&mut req.stdout()).unwrap_or(());
-                        write!(&mut req.stdout(), "Content-Type: text/plain
-
-500 Internal Server Error")
-                            .unwrap_or(());
-
-                        return;
+                        return response::error_500(&mut req.stdout(), Some(e));
                     },
                 }
             }
 
-            error!("Purchaser name or email not set");
-
-            response::set_500(&mut req.stdout()).unwrap_or(());
-            write!(&mut req.stdout(), "Content-Type: text/plain
-
-500 Internal Server Error")
-                .unwrap_or(());
-
-            return;
+            return response::error_500(
+                &mut req.stdout(),
+                Some("Purchaser name or email not set".into())
+            );
         }
 
         response::set_403(&mut req.stdout()).unwrap_or(());
