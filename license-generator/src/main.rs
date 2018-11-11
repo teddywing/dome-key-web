@@ -64,12 +64,6 @@ fn main() -> Result<()> {
         },
     };
 
-    let test_purchaser = Purchaser::new("Shiki", "shiki@example.com");
-    match test_purchaser.insert(&mut cx) {
-        Ok(_) => (),
-        Err(e) => error!("{}", e),
-    }
-
     fastcgi::run(|mut req| {
         let mut params = String::new();
         match req.stdin().read_to_string(&mut params) {
@@ -120,9 +114,42 @@ fn main() -> Result<()> {
         };
 
         if is_verified {
+            let name = ps.get("name");
+            let email = ps.get("email");
+
+            if name.is_some() && email.is_some() {
+                let purchaser = Purchaser::new(name.unwrap(), email.unwrap());
+                match purchaser.insert(&mut cx) {
+                    Ok(_) => {
+                        // TODO: Print message to be appended to user email
+
+                        write!(&mut req.stdout(), "Content-Type: text/plain
+
+200 OK")
+                            .unwrap_or(());
+
+                        return;
+                    },
+                    Err(e) => {
+                        error!("{}", e);
+
+                        response::set_500(&mut req.stdout()).unwrap_or(());
+                        write!(&mut req.stdout(), "Content-Type: text/plain
+
+500 Internal Server Error")
+                            .unwrap_or(());
+
+                        return;
+                    },
+                }
+            }
+
+            error!("Purchaser name or email not set");
+
+            response::set_500(&mut req.stdout()).unwrap_or(());
             write!(&mut req.stdout(), "Content-Type: text/plain
 
-    200 OK")
+500 Internal Server Error")
                 .unwrap_or(());
 
             return;
