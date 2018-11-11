@@ -4,11 +4,10 @@ use mysql;
 
 use errors::*;
 
-pub fn get_database_connection() -> Result<mysql::PooledConn> {
+pub fn get_database_pool() -> Result<mysql::Pool> {
     let connection_url = env::var("DATABASE_URL")
         .chain_err(|| "DATABASE_URL environment variable not found")?;
     let pool = mysql::Pool::new_manual(10, 50, connection_url)?;
-    let cx = pool.get_conn()?;
 
-    Ok(cx)
+    Ok(pool)
 }

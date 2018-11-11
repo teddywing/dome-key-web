@@ -54,10 +54,10 @@ fn main() -> Result<()> {
     log_config.time_format = Some("%+");
     WriteLogger::init(LevelFilter::Info, log_config, log_file)?;
 
-    let mut cx = match database::get_database_connection()
-        .chain_err(|| "failed to create a database connection")
+    let pool = match database::get_database_pool()
+        .chain_err(|| "failed to create a database connection pool")
     {
-        Ok(cx) => cx,
+        Ok(pool) => pool,
         Err(e) => {
             error!("{}", e);
             return Err(e);
@@ -119,6 +119,22 @@ fn main() -> Result<()> {
 
             if name.is_some() && email.is_some() {
                 let purchaser = Purchaser::new(name.unwrap(), email.unwrap());
+
+                let mut cx = match pool.get_conn() {
+                    Ok(cx) => cx,
+                    Err(e) => {
+                        error!("{}", e);
+
+                        response::set_500(&mut req.stdout()).unwrap_or(());
+                        write!(&mut req.stdout(), "Content-Type: text/plain
+
+500 Internal Server Error")
+                            .unwrap_or(());
+
+                        return;
+                    },
+                };
+
                 match purchaser.insert(&mut cx) {
                     Ok(_) => {
                         // TODO: Print message to be appended to user email
