@@ -19,7 +19,7 @@ a.button-magenta {
 	background: #f11c9c; /* Old browsers */
 	background: -moz-linear-gradient(top, #f11c9c 0%, #c91a7d 76%); /* FF3.6-15 */
 	background: -webkit-linear-gradient(top, #f11c9c 0%,#c91a7d 76%); /* Chrome10-25,Safari5.1-6 */
-	background: linear-gradient(to bottom, #f11c9c 0%,#c91a7d 76%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	background: linear-gradient(top bottom, #f11c9c 0%,#c91a7d 76%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f11c9c', endColorstr='#c91a7d',GradientType=0 ); /* IE6-9 */
 
 	color: #ffd7d7;
@@ -33,7 +33,7 @@ a.button-magenta:hover {
 	background: #ff1ea5; /* Old browsers */
 	background: -moz-linear-gradient(top, #ff1ea5 0%, #dd1c83 100%); /* FF3.6-15 */
 	background: -webkit-linear-gradient(top, #ff1ea5 0%,#dd1c83 100%); /* Chrome10-25,Safari5.1-6 */
-	background: linear-gradient(to bottom, #ff1ea5 0%,#dd1c83 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	background: linear-gradient(top bottom, #ff1ea5 0%,#dd1c83 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff1ea5', endColorstr='#dd1c83',GradientType=0 ); /* IE6-9 */
 
 	color: #ffe1e1;
@@ -47,7 +47,7 @@ a.button-magenta:active {
 	background: #dd1a89; /* Old browsers */
 	background: -moz-linear-gradient(top, #dd1a89 0%, #bc186d 100%); /* FF3.6-15 */
 	background: -webkit-linear-gradient(top, #dd1a89 0%,#bc186d 100%); /* Chrome10-25,Safari5.1-6 */
-	background: linear-gradient(to bottom, #dd1a89 0%,#bc186d 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	background: linear-gradient(top bottom, #dd1a89 0%,#bc186d 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dd1a89', endColorstr='#bc186d',GradientType=0 ); /* IE6-9 */
 
 	color: #f1c2c2;
