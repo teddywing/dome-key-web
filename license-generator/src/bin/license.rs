@@ -61,7 +61,7 @@ where W: 'a + Write {
         let page_404 = include_str!("../../../404.html");
         response::set_404(self.writer)
             .and_then(|_|
-                Ok(write!(self.writer, "\n{}", page_404)?)
+                Ok(write!(self.writer, "Content-Type: text/html\n\n{}", page_404)?)
             ).unwrap_or(())
     }
 
