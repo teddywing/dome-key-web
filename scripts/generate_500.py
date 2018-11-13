@@ -18,7 +18,7 @@ with open(os.path.join(script_dir, '../assets/styles.css'), 'r') as f:
     css = f.read()
 
 with open(os.path.join(script_dir, '../assets/logo.svg'), 'r') as f:
-    logo = b64encode(f.read().encode('utf-8'))
+    logo = b64encode(f.read().encode('utf-8')).decode('utf-8')
 
 template = Template(template)
 html = template.substitute(
