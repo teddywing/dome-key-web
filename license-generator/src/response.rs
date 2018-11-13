@@ -20,6 +20,14 @@ pub fn set_500<W: Write>(w: &mut W) -> Result<()> {
     Ok(writeln!(w, "Status: 500")?)
 }
 
+pub fn error_400<W: Write>(w: &mut W) {
+    write!(w, "Status: 400
+Content-Type: text/plain
+
+400 Bad Request")
+        .unwrap_or(());
+}
+
 pub fn error_403<W: Write>(w: &mut W, message: Option<&str>) {
     set_403(w).unwrap_or(());
     write!(

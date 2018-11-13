@@ -180,6 +180,8 @@ Content-Disposition: attachment; filename=\"dome-key-license.zip\"\n\n")
                             email.unwrap_or(&Cow::Borrowed("")),
                             secret.unwrap_or(&Cow::Borrowed("")),
                         );
+
+                        return response::error_400(&mut req.stdout());
                     }
                 },
                 _ => (),
