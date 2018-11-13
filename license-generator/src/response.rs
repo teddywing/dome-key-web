@@ -42,6 +42,14 @@ pub fn error_403<W: Write>(w: &mut W, message: Option<&str>) {
     ).unwrap_or(());
 }
 
+pub fn error_404<W: Write>(w: &mut W) {
+    write!(w, "Status: 404
+Content-Type: text/plain
+
+404 Not Found")
+        .unwrap_or(());
+}
+
 pub fn error_405<W: Write>(w: &mut W, allowed_methods: &str) {
     set_405(w, allowed_methods).unwrap_or(());
     write!(w, "Content-Type: text/plain

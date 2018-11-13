@@ -172,6 +172,8 @@ Content-Disposition: attachment; filename=\"dome-key-license.zip\"\n\n")
                                 .and_then(|_|
                                     req.stdout().write_all(&zip_data.into_inner())
                                 ).unwrap_or(());
+                        } else {
+                            return response::error_404(&mut req.stdout());
                         }
                     } else {
                         error!(
