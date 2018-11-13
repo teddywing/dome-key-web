@@ -87,6 +87,17 @@ fn main() -> Result<()> {
                     // Send Zip file
                     // method POST
 
+                    match req.param("REQUEST_METHOD") {
+                        Some(method) => {
+                            if method != "POST" {
+                                return response::error_405(&mut req.stdout(), "POST");
+                            }
+                        },
+                        None => {
+                            return response::error_500(&mut req.stdout(), None);
+                        },
+                    };
+
                     let ps = params::parse(&params);
                     let name = ps.get("name");
                     let email = ps.get("email");
