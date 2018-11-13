@@ -26,6 +26,9 @@ use license_generator::params;
 use license_generator::response;
 use license_generator::zip;
 
+const PUBLIC_KEY: &'static str = include_str!("../../private/public_key.txt");
+const PRIVATE_KEY: &'static str = include_str!("../../private/private_key.txt");
+
 #[derive(Serialize)]
 struct LicenseData<'a> {
     #[serde(rename = "Name")]
@@ -33,6 +36,76 @@ struct LicenseData<'a> {
 
     #[serde(rename = "Email")]
     email: &'a str,
+}
+
+trait LicenseValidationResponse {
+    fn success(&mut self, name: &str, email: &str);
+    fn error_400(&mut self);
+    fn error_404(&mut self);
+    fn error_500(&mut self, error: Option<Error>);
+}
+
+struct HtmlResponse<'a, W: 'a> {
+    writer: &'a mut W,
+}
+
+impl<'a, W> LicenseValidationResponse for HtmlResponse<'a, W>
+where W: 'a + Write {
+    fn success(&mut self, name: &str, email: &str) {
+    }
+
+    fn error_400(&mut self) {
+    }
+
+    fn error_404(&mut self) {
+    }
+
+    fn error_500(&mut self, error: Option<Error>) {
+    }
+}
+
+struct ZipResponse<'a, W: 'a> {
+    writer: &'a mut W,
+}
+
+impl<'a, W> LicenseValidationResponse for ZipResponse<'a, W>
+where W: 'a + Write {
+    fn success(&mut self, name: &str, email: &str) {
+        let license_data = LicenseData {
+            name: &name,
+            email: &email,
+        };
+
+        let aquatic_prime = AquaticPrime::new(&PUBLIC_KEY, &PRIVATE_KEY);
+        let license = match aquatic_prime.plist(license_data) {
+            Ok(p) => p,
+            Err(e) => return self.error_500(Some(e.into())),
+        };
+
+        let mut zip_data = Cursor::new(vec![]);
+        match zip::license(&mut zip_data, license.as_bytes()) {
+            Ok(p) => p,
+            Err(e) => return self.error_500(Some(e.into())),
+        }
+
+        write!(self.writer, "Content-Type: application/zip
+Content-Disposition: attachment; filename=\"dome-key-license.zip\"\n\n")
+            .and_then(|_|
+                self.writer.write_all(&zip_data.into_inner())
+            ).unwrap_or(());
+    }
+
+    fn error_400(&mut self) {
+        response::error_400(self.writer);
+    }
+
+    fn error_404(&mut self) {
+        response::error_404(self.writer);
+    }
+
+    fn error_500(&mut self, error: Option<Error>) {
+        response::error_500(self.writer, error)
+    }
 }
 
 fn query_purchaser(
@@ -62,6 +135,48 @@ fn query_purchaser(
     Ok(row)
 }
 
+fn build_response<'a, R: LicenseValidationResponse>(
+    cx: &mut mysql::PooledConn,
+    params: &str,
+    responses: &mut R,
+) {
+    let params = params::parse(&params);
+    let name = params.get("name");
+    let email = params.get("email");
+    let secret = params.get("secret");
+
+    if name.is_some() && email.is_some() && secret.is_some() {
+        let name = name.unwrap().to_string();
+        let email = email.unwrap().to_string();
+        let secret = secret.unwrap().to_string();
+
+        let purchaser = match query_purchaser(cx, &name, &email, &secret) {
+            Ok(p) => p,
+            Err(e) => return responses.error_500(Some(e.into())),
+        };
+
+        if let Some(purchaser) = purchaser {
+            match purchaser {
+                Ok(p) => p,
+                Err(e) => return responses.error_500(Some(e.into())),
+            };
+
+            return responses.success(&name, &email);
+        } else {
+            return responses.error_404();
+        }
+    } else {
+        error!(
+            "Missing request parameters: name: '{}', email: '{}', secret: '{}'",
+            name.unwrap_or(&Cow::Borrowed("")),
+            email.unwrap_or(&Cow::Borrowed("")),
+            secret.unwrap_or(&Cow::Borrowed("")),
+        );
+
+        return responses.error_400();
+    }
+}
+
 fn main() -> Result<()> {
     logger::init()?;
 
@@ -74,10 +189,6 @@ fn main() -> Result<()> {
             return Err(e);
         },
     };
-
-    let public_key = include_str!("../../private/public_key.txt");
-    let private_key = include_str!("../../private/private_key.txt");
-    let aquatic_prime = AquaticPrime::new(&public_key, &private_key);
 
     fastcgi::run(move |mut req| {
         let mut params = String::new();
@@ -103,6 +214,12 @@ fn main() -> Result<()> {
                 "/license" => {
                     // Get params name, email, secret
                     // Render thank-you page with link to download file
+                    let params = req.param("QUERY_STRING").unwrap();
+                    let mut responses = HtmlResponse { writer: &mut req.stdout() };
+                    return build_response(&mut cx, &params, &mut responses);
+
+                    // TODO: Extract from /license/download
+                    // trait for HTML vs. text/zip
                 },
 
                 // Respond with a zip archive of the license file
@@ -118,73 +235,8 @@ fn main() -> Result<()> {
                         },
                     };
 
-                    let ps = params::parse(&params);
-                    let name = ps.get("name");
-                    let email = ps.get("email");
-                    let secret = ps.get("secret");
-
-                    if name.is_some() && email.is_some() && secret.is_some() {
-                        let name = name.unwrap().to_string();
-                        let email = email.unwrap().to_string();
-                        let secret = secret.unwrap().to_string();
-
-                        let purchaser = match query_purchaser(&mut cx, &name, &email, &secret) {
-                            Ok(p) => p,
-                            Err(e) => return response::error_500(
-                                &mut req.stdout(),
-                                Some(e.into())
-                            ),
-                        };
-
-                        if let Some(purchaser) = purchaser {
-                            match purchaser {
-                                Ok(p) => p,
-                                Err(e) => return response::error_500(
-                                    &mut req.stdout(),
-                                    Some(e.into())
-                                ),
-                            };
-
-                            let license_data = LicenseData {
-                                name: &name,
-                                email: &email,
-                            };
-
-                            let license = match aquatic_prime.plist(license_data) {
-                                Ok(p) => p,
-                                Err(e) => return response::error_500(
-                                    &mut req.stdout(),
-                                    Some(e.into())
-                                ),
-                            };
-
-                            let mut zip_data = Cursor::new(vec![]);
-                            match zip::license(&mut zip_data, license.as_bytes()) {
-                                Ok(p) => p,
-                                Err(e) => return response::error_500(
-                                    &mut req.stdout(),
-                                    Some(e.into())
-                                ),
-                            }
-
-                            write!(&mut req.stdout(), "Content-Type: application/zip
-Content-Disposition: attachment; filename=\"dome-key-license.zip\"\n\n")
-                                .and_then(|_|
-                                    req.stdout().write_all(&zip_data.into_inner())
-                                ).unwrap_or(());
-                        } else {
-                            return response::error_404(&mut req.stdout());
-                        }
-                    } else {
-                        error!(
-                            "Missing request parameters: name: '{}', email: '{}', secret: '{}'",
-                            name.unwrap_or(&Cow::Borrowed("")),
-                            email.unwrap_or(&Cow::Borrowed("")),
-                            secret.unwrap_or(&Cow::Borrowed("")),
-                        );
-
-                        return response::error_400(&mut req.stdout());
-                    }
+                    let mut responses = ZipResponse { writer: &mut req.stdout() };
+                    return build_response(&mut cx, &params, &mut responses);
                 },
                 _ => (),
             }
