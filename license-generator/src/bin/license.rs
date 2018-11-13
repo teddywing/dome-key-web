@@ -47,25 +47,8 @@ fn main() -> Result<()> {
         },
     };
 
-    // TODO: Change to include_str!
-    let public_key = match std::str::from_utf8(
-        include_bytes!("../../private/public_key.txt")
-    ).chain_err(|| "public key could not be loaded") {
-        Ok(k) => k,
-        Err(e) => {
-            error!("{}", e);
-            return Err(e);
-        },
-    };
-    let private_key = match std::str::from_utf8(
-        include_bytes!("../../private/private_key.txt")
-    ).chain_err(|| "private key could not be loaded") {
-        Ok(k) => k,
-        Err(e) => {
-            error!("{}", e);
-            return Err(e);
-        },
-    };
+    let public_key = include_str!("../../private/public_key.txt");
+    let private_key = include_str!("../../private/private_key.txt");
     let aquatic_prime = AquaticPrime::new(&public_key, &private_key);
 
     fastcgi::run(move |mut req| {
