@@ -124,7 +124,8 @@ fn main() -> Result<()> {
                             let mut zip_data = Cursor::new(vec![]);
                             zip::license(&mut zip_data, license.as_bytes()).unwrap();
 
-                            write!(&mut req.stdout(), "Content-Type: application/zip\n\n")
+                            write!(&mut req.stdout(), "Content-Type: application/zip
+Content-Disposition: attachment; filename=\"dome-key-license.zip\"\n\n")
                                 .unwrap();
                             req.stdout().write_all(&zip_data.into_inner()).unwrap();
                         }
