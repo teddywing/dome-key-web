@@ -7,6 +7,7 @@ extern crate exitcode;
 
 #[macro_use]
 extern crate log;
+extern crate mysql;
 
 #[macro_use]
 extern crate serde_derive;
@@ -32,6 +33,33 @@ struct LicenseData<'a> {
 
     #[serde(rename = "Email")]
     email: &'a str,
+}
+
+fn query_purchaser(
+    cx: &mut mysql::PooledConn,
+    name: &str,
+    email: &str,
+    secret: &str,
+) -> Result<Option<std::result::Result<mysql::Row, mysql::Error>>> {
+    let mut tx = cx.start_transaction(false, None, None)?;
+    let row = tx.prep_exec("
+        SELECT id FROM purchasers
+        WHERE
+            name = ?
+        AND
+            email = ?
+        AND
+            secret = ?",
+        (
+            &name,
+            &email,
+            &secret,
+        )
+    )?.next();
+
+    tx.commit()?;
+
+    Ok(row)
 }
 
 fn main() -> Result<()> {
@@ -108,23 +136,8 @@ fn main() -> Result<()> {
                         let email = email.unwrap().to_string();
                         let secret = secret.unwrap().to_string();
 
-                        let mut tx = cx.start_transaction(false, None, None).unwrap();
-                        let row = tx.prep_exec("
-                            SELECT id FROM purchasers
-                            WHERE
-                                name = ?
-                            AND
-                                email = ?
-                            AND
-                                secret = ?",
-                            (
-                                &name,
-                                &email,
-                                &secret,
-                            )
-                        ).unwrap().next();
-
-                        if row.is_some() {
+                        let purchaser = query_purchaser(&mut cx, &name, &email, &secret).unwrap();
+                        if purchaser.is_some() {
                             let license_data = LicenseData {
                                 name: &name,
                                 email: &email,
@@ -140,8 +153,6 @@ Content-Disposition: attachment; filename=\"dome-key-license.zip\"\n\n")
                                 .unwrap();
                             req.stdout().write_all(&zip_data.into_inner()).unwrap();
                         }
-
-                        tx.commit().unwrap();
                     } else {
                         error!(
                             "Missing request parameters: name: '{}', email: '{}', secret: '{}'",
