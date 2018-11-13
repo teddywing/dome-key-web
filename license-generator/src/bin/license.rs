@@ -88,13 +88,6 @@ fn main() -> Result<()> {
 
         logger::log_request(&req, &params);
 
-        // method = req.param("REQUEST_METHOD")
-        //     .unwrap_or("REQUEST_METHOD".into()),
-        // path = req.param("SCRIPT_NAME")
-        //     .unwrap_or("SCRIPT_NAME".into()),
-        // query = req.param("QUERY_STRING")
-        //     .unwrap_or("QUERY_STRING".into()),
-
         let mut cx = match pool.get_conn() {
             Ok(cx) => cx,
             Err(e) => {
@@ -111,10 +104,9 @@ fn main() -> Result<()> {
                     // Get params name, email, secret
                     // Render thank-you page with link to download file
                 },
-                "/license/download" => {
-                    // Send Zip file
-                    // method POST
 
+                // Respond with a zip archive of the license file
+                "/license/download" => {
                     match req.param("REQUEST_METHOD") {
                         Some(method) => {
                             if method != "POST" {
