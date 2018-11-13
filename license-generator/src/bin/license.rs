@@ -55,6 +55,11 @@ where W: 'a + Write {
     }
 
     fn error_400(&mut self) {
+        let page_400 = include_str!("../../../400.html");
+        response::set_400(self.writer)
+            .and_then(|_|
+                Ok(write!(self.writer, "Content-Type: text/html\n\n{}", page_400)?)
+            ).unwrap_or(())
     }
 
     fn error_404(&mut self) {

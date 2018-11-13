@@ -2,6 +2,10 @@ use std::io::Write;
 
 use errors::*;
 
+pub fn set_400<W: Write>(w: &mut W) -> Result<()> {
+    Ok(writeln!(w, "Status: 400")?)
+}
+
 pub fn set_403<W: Write>(w: &mut W) -> Result<()> {
     Ok(writeln!(w, "Status: 403")?)
 }
