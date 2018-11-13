@@ -136,17 +136,44 @@ fn main() -> Result<()> {
                         let email = email.unwrap().to_string();
                         let secret = secret.unwrap().to_string();
 
-                        let purchaser = query_purchaser(&mut cx, &name, &email, &secret).unwrap();
-                        if purchaser.is_some() {
+                        let purchaser = match query_purchaser(&mut cx, &name, &email, &secret) {
+                            Ok(p) => p,
+                            Err(e) => return response::error_500(
+                                &mut req.stdout(),
+                                Some(e.into())
+                            ),
+                        };
+
+                        if let Some(purchaser) = purchaser {
+                            match purchaser {
+                                Ok(p) => p,
+                                Err(e) => return response::error_500(
+                                    &mut req.stdout(),
+                                    Some(e.into())
+                                ),
+                            };
+
                             let license_data = LicenseData {
                                 name: &name,
                                 email: &email,
                             };
 
-                            let license = aquatic_prime.plist(license_data).unwrap();
+                            let license = match aquatic_prime.plist(license_data) {
+                                Ok(p) => p,
+                                Err(e) => return response::error_500(
+                                    &mut req.stdout(),
+                                    Some(e.into())
+                                ),
+                            };
 
                             let mut zip_data = Cursor::new(vec![]);
-                            zip::license(&mut zip_data, license.as_bytes()).unwrap();
+                            match zip::license(&mut zip_data, license.as_bytes()) {
+                                Ok(p) => p,
+                                Err(e) => return response::error_500(
+                                    &mut req.stdout(),
+                                    Some(e.into())
+                                ),
+                            }
 
                             write!(&mut req.stdout(), "Content-Type: application/zip
 Content-Disposition: attachment; filename=\"dome-key-license.zip\"\n\n")

@@ -1,3 +1,5 @@
+extern crate aquatic_prime;
+
 #[macro_use]
 extern crate error_chain;
 extern crate fastcgi;

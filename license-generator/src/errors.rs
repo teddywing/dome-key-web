@@ -1,3 +1,4 @@
+use aquatic_prime;
 use log;
 use mysql;
 use paddle;
@@ -13,6 +14,7 @@ error_chain! {
         MySql(mysql::error::Error);
         Zip(zip_lib::result::ZipError);
 
+        AquaticPrime(aquatic_prime::errors::Error);
         Paddle(paddle::errors::Error);
     }
 }
