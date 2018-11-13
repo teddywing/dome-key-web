@@ -6,6 +6,10 @@ pub fn set_403<W: Write>(w: &mut W) -> Result<()> {
     Ok(writeln!(w, "Status: 403")?)
 }
 
+pub fn set_404<W: Write>(w: &mut W) -> Result<()> {
+    Ok(writeln!(w, "Status: 404")?)
+}
+
 pub fn set_405<W: Write>(w: &mut W, allowed_methods: &str) -> Result<()> {
     Ok(
         writeln!(

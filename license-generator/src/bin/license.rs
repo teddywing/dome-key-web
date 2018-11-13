@@ -58,6 +58,11 @@ where W: 'a + Write {
     }
 
     fn error_404(&mut self) {
+        let page_404 = include_str!("../../../404.html");
+        response::set_404(self.writer)
+            .and_then(|_|
+                Ok(write!(self.writer, "\n{}", page_404)?)
+            ).unwrap_or(())
     }
 
     fn error_500(&mut self, error: Option<Error>) {
