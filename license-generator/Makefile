@@ -1,3 +1,4 @@
 .PHONY: run
 run:
-	echo target/debug/license-generator | entr -r lighttpd -f lighttpd.conf -D
+	ls target/debug/license-generator target/debug/license | \
+		entr -r lighttpd -f lighttpd.conf -D
