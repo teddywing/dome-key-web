@@ -215,6 +215,8 @@ fn main() -> Result<()> {
         };
 
         if let Some(path) = req.param("REQUEST_URI") {
+            let path = path.split("?").collect::<Vec<_>>()[0];
+
             match path.as_ref() {
                 "/license" => {
                     // Get params name, email, secret
