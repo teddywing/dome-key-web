@@ -150,8 +150,9 @@ fn main() -> Result<()> {
 
                             write!(&mut req.stdout(), "Content-Type: application/zip
 Content-Disposition: attachment; filename=\"dome-key-license.zip\"\n\n")
-                                .unwrap();
-                            req.stdout().write_all(&zip_data.into_inner()).unwrap();
+                                .and_then(|_|
+                                    req.stdout().write_all(&zip_data.into_inner())
+                                ).unwrap_or(());
                         }
                     } else {
                         error!(
