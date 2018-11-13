@@ -24,13 +24,11 @@ pub fn init() -> Result<()> {
 
 pub fn log_request(req: &fastcgi::Request, post_params: &str) {
     info!(
-        "{method} {path} {query} - {protocol} - {user_agent} - {remote_addr} | {forwarded_for} / {post_params}",
+        "{method} {path} - {protocol} - {user_agent} - {remote_addr} | {forwarded_for} / {post_params}",
         method = req.param("REQUEST_METHOD")
             .unwrap_or("REQUEST_METHOD".into()),
         path = req.param("REQUEST_URI")
             .unwrap_or("REQUEST_URI".into()),
-        query = req.param("QUERY_STRING")
-            .unwrap_or("QUERY_STRING".into()),
         protocol = req.param("SERVER_PROTOCOL")
             .unwrap_or("SERVER_PROTOCOL".into()),
         user_agent = req.param("HTTP_USER_AGENT")
