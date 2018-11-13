@@ -1,21 +1,38 @@
 ///! FastCGI script that displays a thank-you page with a link to download a
 ///! custom-generated license.
 
+extern crate aquatic_prime;
 extern crate fastcgi;
+extern crate exitcode;
 
 #[macro_use]
 extern crate log;
 
+#[macro_use]
+extern crate serde_derive;
+
 extern crate license_generator;
 
 use std::borrow::Cow;
-use std::io::{Read, Write};
+use std::io::{Cursor, Read, Write};
+
+use aquatic_prime::AquaticPrime;
 
 use license_generator::database;
 use license_generator::errors::*;
 use license_generator::logger;
 use license_generator::params;
 use license_generator::response;
+use license_generator::zip;
+
+#[derive(Serialize)]
+struct LicenseData<'a> {
+    #[serde(rename = "Name")]
+    name: &'a str,
+
+    #[serde(rename = "Email")]
+    email: &'a str,
+}
 
 fn main() -> Result<()> {
     logger::init()?;
@@ -29,6 +46,27 @@ fn main() -> Result<()> {
             return Err(e);
         },
     };
+
+    // TODO: Change to include_str!
+    let public_key = match std::str::from_utf8(
+        include_bytes!("../../private/public_key.txt")
+    ).chain_err(|| "public key could not be loaded") {
+        Ok(k) => k,
+        Err(e) => {
+            error!("{}", e);
+            return Err(e);
+        },
+    };
+    let private_key = match std::str::from_utf8(
+        include_bytes!("../../private/private_key.txt")
+    ).chain_err(|| "private key could not be loaded") {
+        Ok(k) => k,
+        Err(e) => {
+            error!("{}", e);
+            return Err(e);
+        },
+    };
+    let aquatic_prime = AquaticPrime::new(&public_key, &private_key);
 
     fastcgi::run(move |mut req| {
         let mut params = String::new();
@@ -72,8 +110,12 @@ fn main() -> Result<()> {
                     let secret = ps.get("secret");
 
                     if name.is_some() && email.is_some() && secret.is_some() {
+                        let name = name.unwrap().to_string();
+                        let email = email.unwrap().to_string();
+                        let secret = secret.unwrap().to_string();
+
                         let mut tx = cx.start_transaction(false, None, None).unwrap();
-                        let query_result = tx.prep_exec("
+                        let row = tx.prep_exec("
                             SELECT id FROM purchasers
                             WHERE
                                 name = ?
@@ -82,13 +124,27 @@ fn main() -> Result<()> {
                             AND
                                 secret = ?",
                             (
-                                name.unwrap().to_string(),
-                                email.unwrap().to_string(),
-                                secret.unwrap().to_string(),
+                                &name,
+                                &email,
+                                &secret,
                             )
                         ).unwrap().next();
 
-                        info!("Row: {:?}", query_result);
+                        if row.is_some() {
+                            let license_data = LicenseData {
+                                name: &name,
+                                email: &email,
+                            };
+
+                            let license = aquatic_prime.plist(license_data).unwrap();
+
+                            let mut zip_data = Cursor::new(vec![]);
+                            zip::license(&mut zip_data, license.as_bytes()).unwrap();
+
+                            write!(&mut req.stdout(), "Content-Type: application/zip\n\n")
+                                .unwrap();
+                            req.stdout().write_all(&zip_data.into_inner()).unwrap();
+                        }
 
                         tx.commit().unwrap();
                     } else {

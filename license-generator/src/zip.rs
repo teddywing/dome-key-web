@@ -4,7 +4,7 @@ use zip_lib as zip;
 
 use errors::*;
 
-pub fn license<W: Write + Seek>(w: W, plist: &[u8]) -> Result<()> {
+pub fn license<W: Write + Seek>(w: &mut W, plist: &[u8]) -> Result<()> {
     let mut zip = zip::ZipWriter::new(w);
 
     zip.start_file(
