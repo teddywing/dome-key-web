@@ -8,23 +8,27 @@ extern crate log;
 
 extern crate license_generator;
 
+use std::borrow::Cow;
 use std::io::{Read, Write};
 
+use license_generator::database;
 use license_generator::errors::*;
 use license_generator::logger;
+use license_generator::params;
+use license_generator::response;
 
 fn main() -> Result<()> {
     logger::init()?;
 
-    // let pool = match database::get_database_pool()
-    //     .chain_err(|| "failed to create a database connection pool")
-    // {
-    //     Ok(pool) => pool,
-    //     Err(e) => {
-    //         error!("{}", e);
-    //         return Err(e);
-    //     },
-    // };
+    let pool = match database::get_database_pool()
+        .chain_err(|| "failed to create a database connection pool")
+    {
+        Ok(pool) => pool,
+        Err(e) => {
+            error!("{}", e);
+            return Err(e);
+        },
+    };
 
     fastcgi::run(move |mut req| {
         let mut params = String::new();
@@ -42,6 +46,16 @@ fn main() -> Result<()> {
         // query = req.param("QUERY_STRING")
         //     .unwrap_or("QUERY_STRING".into()),
 
+        let mut cx = match pool.get_conn() {
+            Ok(cx) => cx,
+            Err(e) => {
+                return response::error_500(
+                    &mut req.stdout(),
+                    Some(e.into())
+                );
+            },
+        };
+
         if let Some(path) = req.param("REQUEST_URI") {
             match path.as_ref() {
                 "/license" => {
@@ -51,6 +65,40 @@ fn main() -> Result<()> {
                 "/license/download" => {
                     // Send Zip file
                     // method POST
+
+                    let ps = params::parse(&params);
+                    let name = ps.get("name");
+                    let email = ps.get("email");
+                    let secret = ps.get("secret");
+
+                    if name.is_some() && email.is_some() && secret.is_some() {
+                        let mut tx = cx.start_transaction(false, None, None).unwrap();
+                        let query_result = tx.prep_exec("
+                            SELECT id FROM purchasers
+                            WHERE
+                                name = ?
+                            AND
+                                email = ?
+                            AND
+                                secret = ?",
+                            (
+                                name.unwrap().to_string(),
+                                email.unwrap().to_string(),
+                                secret.unwrap().to_string(),
+                            )
+                        ).unwrap().next();
+
+                        info!("Row: {:?}", query_result);
+
+                        tx.commit().unwrap();
+                    } else {
+                        error!(
+                            "Missing request parameters: name: '{}', email: '{}', secret: '{}'",
+                            name.unwrap_or(&Cow::Borrowed("")),
+                            email.unwrap_or(&Cow::Borrowed("")),
+                            secret.unwrap_or(&Cow::Borrowed("")),
+                        );
+                    }
                 },
                 _ => (),
             }
