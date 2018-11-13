@@ -27,8 +27,8 @@ pub fn log_request(req: &fastcgi::Request, post_params: &str) {
         "{method} {path} {query} - {protocol} - {user_agent} - {remote_addr} | {forwarded_for} / {post_params}",
         method = req.param("REQUEST_METHOD")
             .unwrap_or("REQUEST_METHOD".into()),
-        path = req.param("SCRIPT_NAME")
-            .unwrap_or("SCRIPT_NAME".into()),
+        path = req.param("REQUEST_URI")
+            .unwrap_or("REQUEST_URI".into()),
         query = req.param("QUERY_STRING")
             .unwrap_or("QUERY_STRING".into()),
         protocol = req.param("SERVER_PROTOCOL")
