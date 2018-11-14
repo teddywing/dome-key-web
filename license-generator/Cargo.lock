@@ -306,6 +306,7 @@ name = "license-generator"
 version = "0.0.1"
 dependencies = [
  "aquatic-prime 0.0.1",
+ "chrono 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "error-chain 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "exitcode 1.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "fastcgi 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",

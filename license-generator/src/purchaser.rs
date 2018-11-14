@@ -1,3 +1,4 @@
+use chrono::Utc;
 use mysql;
 use rand::{self, Rng};
 use sha1;
@@ -24,10 +25,12 @@ impl<'a> Purchaser<'a> {
     }
 
     fn generate_secret(&mut self) {
+        let timestamp = Utc::now().timestamp();
+
         let mut rng = rand::thread_rng();
         let random: usize = rng.gen_range(1_000_000_000, ::std::usize::MAX);
 
-        let source = format!("{}{}{}", self.name, self.email, random);
+        let source = format!("{}{}{}{}", self.name, self.email, timestamp, random);
         let digest = sha1::Sha1::from(source).hexdigest();
 
         self.secret = Some(digest);

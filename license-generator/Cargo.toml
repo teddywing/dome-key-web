@@ -4,6 +4,7 @@ version = "0.0.1"
 
 [dependencies]
 aquatic-prime = { path = "aquatic-prime" }
+chrono = "0.4.6"
 error-chain = "0.12.0"
 exitcode = "1.1.2"
 fastcgi = "1.0.0"
