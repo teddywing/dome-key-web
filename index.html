@@ -48,7 +48,8 @@
 				class="buy-button
 					button button-magenta
 					padding-top-9 padding-bottom-9
-					position-absolute right-0 bottom-0">
+					position-absolute right-0 bottom-0"
+				onclick="Paddle.Checkout.open({ product: 544591 })">
 				Buy ($15)
 			</a>
 		</div>
@@ -107,5 +108,10 @@ cmd &lt;Play&gt; osascript -e 'activate application "Terminal"' -e 'tell applica
 			Licenses are valid for all 1.x releases of the program.
 		</p>
 	</div>
+
+	<script src="https://cdn.paddle.com/paddle/paddle.js"></script>
+	<script type="text/javascript">
+		Paddle.Setup({ vendor: 36825 });
+	</script>
 </body>
 </html>
