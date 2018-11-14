@@ -6,13 +6,21 @@ ErrorDocument 404 /404.html
 
 RewriteEngine on
 
+# Redirect HTTP to HTTPS
 RewriteCond %{HTTPS} != on
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
+# Disallow access to .htaccess
 RewriteRule /?\.htaccess$ - [F,L]
 
-RewriteRule ^(license-generator) license-generator.fcgi [L]
-
+# Remove .html extension
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^([^\.]+)$ $1.html [L]
+
+# FastCGI routes
+RewriteRule ^(license) license.fcgi [QSA,L]
+RewriteRule ^(license/download) license.fcgi [QSA,L]
+RewriteRule ^(fulfillment) fulfillment.fcgi [QSA,L]
+RewriteRule ^(license.fcgi)$ - [L,R=404]
+RewriteRule ^(fulfillment.fcgi)$ - [L,R=404]
