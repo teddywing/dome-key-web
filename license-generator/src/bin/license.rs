@@ -39,7 +39,7 @@ struct LicenseData<'a> {
 }
 
 trait LicenseValidationResponse {
-    fn success(&mut self, name: &str, email: &str);
+    fn success(&mut self, name: &str, email: &str, secret: &str);
     fn error_400(&mut self);
     fn error_404(&mut self);
     fn error_500(&mut self, error: Option<Error>);
@@ -51,7 +51,18 @@ struct HtmlResponse<'a, W: 'a> {
 
 impl<'a, W> LicenseValidationResponse for HtmlResponse<'a, W>
 where W: 'a + Write {
-    fn success(&mut self, name: &str, email: &str) {
+    fn success(&mut self, name: &str, email: &str, secret: &str) {
+        write!(
+            self.writer,
+            "Status: 200
+Content-Type: text/html\n\n{}",
+            format!(
+                include_str!("../../../thank-you.html"),
+                name = name,
+                email = email,
+                secret = secret,
+            )
+        ).unwrap_or(())
     }
 
     fn error_400(&mut self) {
@@ -80,7 +91,7 @@ struct ZipResponse<'a, W: 'a> {
 
 impl<'a, W> LicenseValidationResponse for ZipResponse<'a, W>
 where W: 'a + Write {
-    fn success(&mut self, name: &str, email: &str) {
+    fn success(&mut self, name: &str, email: &str, _secret: &str) {
         let license_data = LicenseData {
             name: &name,
             email: &email,
@@ -171,7 +182,7 @@ fn build_response<'a, R: LicenseValidationResponse>(
                 Err(e) => return responses.error_500(Some(e.into())),
             };
 
-            return responses.success(&name, &email);
+            return responses.success(&name, &email, &secret);
         } else {
             return responses.error_404();
         }
