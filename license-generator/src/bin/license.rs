@@ -82,6 +82,15 @@ Content-Type: text/html\n\n{}",
     }
 
     fn error_500(&mut self, error: Option<Error>) {
+        if let Some(error) = error {
+            error!("{}", error);
+        }
+
+        let page_500 = include_str!("../../../internal_error.html");
+        response::set_500(self.writer)
+            .and_then(|_|
+                Ok(write!(self.writer, "Content-Type: text/html\n\n{}", page_500)?)
+            ).unwrap_or(())
     }
 }
 
