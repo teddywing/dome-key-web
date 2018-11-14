@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Thank you! – DomeKey</title>
+	<meta name="description" content="DomeKey gives you the power to remap your headphone buttons to any action you can think of. Define mappings in text using a Vim-like configuration language." />
+
+	<meta name="viewport" content="width=device-width">
+
+	<link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+	<div class="content">
+		<header>
+			<h1>DomeKey</h1>
+			<img src="assets/logo.svg" alt="DomeKey logo" />
+		</header>
+
+		<p class="font-size-1.52 color-maroon">
+			Control your computer with a pair of headphones
+		</p>
+
+		<p class="text-center font-size-2.5">
+			Thanks so much for buying DomeKey!
+		</p>
+
+		<form method="post" action="/license/download">
+			<input type="hidden" name="name" value="{name}" />
+			<input type="hidden" name="email" value="{email}" />
+			<input type="hidden" name="secret" value="{secret}" />
+
+			<button
+				type="submit"
+				class="button button-magenta
+					display-block margin-left-auto margin-right-auto
+					margin-top-2 margin-bottom-2">
+				Download your license
+			</button>
+		</form>
+
+		<p>
+			If you need any help, <a href="">let me know</a>.
+		</p>
+
+		<p>
+			Also, check out the
+			<a href="https://github.com/teddywing/DomeKey">source code</a>
+			if you're interested.
+		</p>
+	</div>
+</body>
+</html>

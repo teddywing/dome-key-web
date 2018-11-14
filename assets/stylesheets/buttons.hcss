@@ -1,15 +1,18 @@
 .button {
 	padding: 13px 15px;
-}
 
-a.button {
 	border: 1px solid;
 	border-radius: 10px;
 
 	font-family: LUCIDA_GRANDE;
+	font-size: inherit;
+}
+
+a.button {
 	text-decoration: none;
 }
 
+.button-magenta,
 a.button-magenta {
 	border-color: #790d52;
 
@@ -26,6 +29,7 @@ a.button-magenta {
 	text-shadow: 0px -1px 1px #161c1f;
 }
 
+.button-magenta:hover,
 a.button-magenta:hover {
 	border-color: #9e0e6a;
 
@@ -39,6 +43,7 @@ a.button-magenta:hover {
 	color: #ffe1e1;
 }
 
+.button-magenta:active,
 a.button-magenta:active {
 	border-color: #4c0833;
 	box-shadow: 0 3px 13px -2px #2b041c;
