@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>dome-key(1)</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /></head><body><div xml:lang="en" class="article" lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="idm229411390320"></a>dome-key(1)</h2></div></div><hr /></div><div class="toc"><p><strong>Table of Contents</strong></p><dl class="toc"><dt><span class="section"><a href="#_name">1. NAME</a></span></dt><dt><span class="section"><a href="#_synopsis">2. SYNOPSIS</a></span></dt><dt><span class="section"><a href="#_description">3. DESCRIPTION</a></span></dt><dt><span class="section"><a href="#_options">4. OPTIONS</a></span></dt><dt><span class="section"><a href="#_configuration">5. CONFIGURATION</a></span></dt><dt><span class="section"><a href="#_mappings">6. MAPPINGS</a></span></dt><dt><span class="section"><a href="#_launchd">7. LAUNCHD</a></span></dt><dt><span class="section"><a href="#_files">8. FILES</a></span></dt><dt><span class="section"><a href="#_see_also">9. SEE ALSO</a></span></dt><dt><span class="section"><a href="#_copyright">10. COPYRIGHT</a></span></dt><dd><dl><dt><span class="section"><a href="#_aquatic_prime">10.1. Aquatic Prime</a></span></dt></dl></dd></dl></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_name"></a>1. NAME</h2></div></div></div><p>dome-key - Custom mappings for headphone buttons</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_synopsis"></a>2. SYNOPSIS</h2></div></div></div><p><span class="strong"><strong>dome-key</strong></span> [<span class="emphasis"><em>options</em></span>]</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_description"></a>3. DESCRIPTION</h2></div></div></div><p>Enables customisation of headphone buttons. The <span class="strong"><strong>dome-key</strong></span> program runs
+in the background listening to button events, executing user-defined
+actions in response to these events.</p><p>Headphone button mappings are defined in a file called
+<span class="emphasis"><em>~/.config/dome-key/mappings.dkmap</em></span>. See <span class="emphasis"><em>MAPPINGS</em></span> or
+dome-key-mappings(7) for more information.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_options"></a>4. OPTIONS</h2></div></div></div><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+--audio
+</span></dt><dd>
+        Play interface audio. Sounds will play to provide feedback when a mode
+        is activated or deactivated.
+</dd><dt><span class="term">
+-d, --daemon
+</span></dt><dd>
+        Run the daemon in the current shell to listen for headphone button
+        events. The program will run in the foreground.
+</dd><dt><span class="term">
+-h, --help
+</span></dt><dd>
+        Print usage help.
+</dd><dt><span class="term">
+--license <span class="emphasis"><em>file</em></span>
+</span></dt><dd>
+        Register the software using the license plist file at path <span class="emphasis"><em>file</em></span>.
+</dd><dt><span class="term">
+-r, --reload-mappings
+</span></dt><dd>
+        Reload the mappings file. If an instance of <span class="strong"><strong>dome-key</strong></span> is running, no
+        updates to the mappings file are taken into account automatically.
+        Executing the program with this flag will cause the running daemon to
+        reload the mappings file into its memory. This is typically easier
+        than killing and relaunching the daemon.
+</dd><dt><span class="term">
+-v, --version
+</span></dt><dd>
+        Print the program version.
+</dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_configuration"></a>5. CONFIGURATION</h2></div></div></div><p>An optional configuration file can be added at
+<span class="emphasis"><em>~/.config/dome-key/config.toml</em></span>.</p><p>Presently, only one configuration option is available. Here’s an example
+config:</p><pre class="literallayout">timeout = 400</pre><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+timeout
+</span></dt><dd>
+        Sets the speed of multi-button mappings. To run an action mapped to
+        <span class="emphasis"><em>&lt;Play&gt;&lt;Down&gt;</em></span>, you first press the ‘play’ button, then the ‘down’
+        button on your headphones. The time allowed between each button press
+        is defined by this option. By default, it’s set to 500 milliseconds.
+        It can be changed to any positive integer amount of milliseconds.
+        Setting it to <span class="emphasis"><em>0</em></span> will prevent multi-button mappings and cause button
+        actions to be executed immediately.
+</dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_mappings"></a>6. MAPPINGS</h2></div></div></div><p>Mappings are defined in <span class="emphasis"><em>~/.config/dome-key/mappings.dkmap</em></span>. See
+dome-key-mappings(7) for a complete explanation of the syntax.</p><p>If a button is not mapped, it retains its normal function. The following
+mappings apply when undefined, even without a mappings file:</p><pre class="literallayout">map &lt;Up&gt; &lt;VolumeUp&gt;
+map &lt;Play&gt; &lt;Play&gt;
+map &lt;Down&gt; &lt;VolumeDown&gt;</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_launchd"></a>7. LAUNCHD</h2></div></div></div><p>It’s recommended that you run the program in the background using
+launchd(8). Here’s an example plist:</p><pre class="literallayout">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN"
+        "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;
+&lt;plist version="1.0"&gt;
+&lt;dict&gt;
+        &lt;key&gt;Label&lt;/key&gt;
+        &lt;string&gt;com.teddywing.dome-key&lt;/string&gt;
+        &lt;key&gt;ProgramArguments&lt;/key&gt;
+        &lt;array&gt;
+                &lt;string&gt;/usr/local/bin/dome-key&lt;/string&gt;
+                &lt;string&gt;--daemon&lt;/string&gt;
+                &lt;string&gt;--audio&lt;/string&gt;
+        &lt;/array&gt;
+        &lt;key&gt;RunAtLoad&lt;/key&gt;
+        &lt;true/&gt;
+        &lt;key&gt;KeepAlive&lt;/key&gt;
+        &lt;true/&gt;
+        &lt;key&gt;StandardErrorPath&lt;/key&gt;
+        &lt;string&gt;/tmp/dome-key.log&lt;/string&gt;
+&lt;/dict&gt;
+&lt;/plist&gt;</pre><p>You can also use <span class="strong"><strong>brew services</strong></span> to do this automatically if the program
+was installed with Homebrew.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_files"></a>8. FILES</h2></div></div></div><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+<span class="strong"><strong>~/.config/dome-key/config.toml</strong></span>
+</span></dt><dd>
+        Configuration file.
+</dd><dt><span class="term">
+<span class="strong"><strong>~/.config/dome-key/mappings.dkmap</strong></span>
+</span></dt><dd>
+        Button mapping definitions.
+</dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_see_also"></a>9. SEE ALSO</h2></div></div></div><p>dome-key-mappings(7).</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_copyright"></a>10. COPYRIGHT</h2></div></div></div><p>Copyright © 2018 Teddy Wing</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_aquatic_prime"></a>10.1. Aquatic Prime</h3></div></div></div><p>Copyright © 2005-2010 Lucas Newman and other contributors. All rights
+reserved.</p><p>Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+</li><li class="listitem">
+Redistributions in binary form must reproduce the above copyright
+  notice, this list of conditions and the following disclaimer in the
+  documentation and/or other materials provided with the distribution.
+</li><li class="listitem">
+Neither the name of the Aquatic nor the names of its contributors may be
+  used to endorse or promote products derived from this software without
+  specific prior written permission.
+</li></ul></div><p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p></div></div></div></body></html>

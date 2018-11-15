@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>dome-key-mappings(7)</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /></head><body><div xml:lang="en" class="article" lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="idm319643336560"></a>dome-key-mappings(7)</h2></div></div><hr /></div><div class="toc"><p><strong>Table of Contents</strong></p><dl class="toc"><dt><span class="section"><a href="#_name">1. NAME</a></span></dt><dt><span class="section"><a href="#_synopsis">2. SYNOPSIS</a></span></dt><dt><span class="section"><a href="#_description">3. DESCRIPTION</a></span></dt><dt><span class="section"><a href="#_syntax">4. SYNTAX</a></span></dt><dd><dl><dt><span class="section"><a href="#_map">4.1. Map</a></span></dt><dt><span class="section"><a href="#_command">4.2. Command</a></span></dt><dt><span class="section"><a href="#_mode">4.3. Mode</a></span></dt><dt><span class="section"><a href="#_special_keys">4.4. Special Keys</a></span></dt><dt><span class="section"><a href="#_modifiers">4.5. Modifiers</a></span></dt></dl></dd><dt><span class="section"><a href="#_examples_2">5. EXAMPLES</a></span></dt><dt><span class="section"><a href="#_see_also">6. SEE ALSO</a></span></dt></dl></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_name"></a>1. NAME</h2></div></div></div><p>dome-key-mappings - Mapping definition syntax for dome-key</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_synopsis"></a>2. SYNOPSIS</h2></div></div></div><p>Describes dome-key’s mapping syntax</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_description"></a>3. DESCRIPTION</h2></div></div></div><p>The mappings file lives at <span class="emphasis"><em>~/.config/dome-key/mappings.dkmap</em></span>. All
+mappings should be written there. Three types of mappings can be defined:
+maps, commands, and modes.</p><p>Maps are used to simulate keyboard keys. Commands run shell commands.
+Modes, when activated, enable you to define multiple actions for the same
+headphone buttons.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_syntax"></a>4. SYNTAX</h2></div></div></div><p>Map and command mappings are composed of three parts, each separated by
+whitespace (one or more spaces or tabs):</p><pre class="literallayout">MAP_TYPE TRIGGER ACTION</pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+MAP_TYPE is the kind of action (<span class="strong"><strong>map</strong></span> or <span class="strong"><strong>cmd</strong></span>).
+</li><li class="listitem">
+TRIGGER is one or more headphone keys (<span class="strong"><strong>&lt;Up&gt;</strong></span>, <span class="strong"><strong>&lt;Play&gt;</strong></span>, <span class="strong"><strong>&lt;Down&gt;</strong></span>).
+</li><li class="listitem">
+ACTION defines what to do when the headphone keys from TRIGGER are
+  pressed.
+</li></ul></div><p>Mappings must be written on a single line. No line continuation operator
+is available.</p><p>Comment lines are prefixed with a ‘#’ and must appear on their own line.
+They are not permitted on the same line as mapping definitions.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_map"></a>4.1. Map</h3></div></div></div><p>ACTION corresponds to a sequence of keyboard keys that will be pressed
+virtually. For example,</p><pre class="literallayout">map &lt;Up&gt; Hello&lt;Enter&gt;</pre><p>will type "Hello" with a newline at the end. Simulated keys are pressed in
+succession as quickly as possible. There is no way to wait or sleep
+between keys.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_command"></a>4.2. Command</h3></div></div></div><p>ACTION must be a shell command. In:</p><pre class="literallayout">cmd &lt;Down&gt; say "Good morning"</pre><p>the <span class="strong"><strong>/usr/bin/say</strong></span> command will be executed, playing "Good morning" in
+audible speech.</p><p>This map type is useful for running arbitrary code that can’t be expressed
+by simulating keyboard keys with a <span class="strong"><strong>map</strong></span>.</p><p>Commands are executed with <span class="strong"><strong>$SHELL -c ACTION</strong></span>. If <span class="strong"><strong>$SHELL</strong></span> isn’t set,
+<span class="strong"><strong>/bin/sh</strong></span> is used instead.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_mode"></a>4.3. Mode</h3></div></div></div><p>You can think of modes like Vim modes. They enable you to map the same
+trigger more than once. Let’s look at an example:</p><pre class="literallayout">cmd &lt;Play&gt; open -a Firefox</pre><pre class="literallayout">mode &lt;Up&gt; {
+        map &lt;Play&gt; &lt;Space&gt;
+}</pre><p>Here, the <span class="strong"><strong>&lt;Play&gt;</strong></span> headphone button will open Firefox. But when the mode
+is active, pressing <span class="strong"><strong>&lt;Play&gt;</strong></span> instead simulates the Space key.</p><p>Modes are both activated and deactivated by pressing the TRIGGER sequence
+written after the <span class="strong"><strong>mode</strong></span> keyword. The trigger functions as a toggle. In
+our example, pressing <span class="strong"><strong>&lt;Up&gt;</strong></span> activates the mode. If the mode is active,
+pressing <span class="strong"><strong>&lt;Up&gt;</strong></span> will deactivate the mode, causing top-level mappings to
+become available again.</p><p>Any number of maps and commands can be defined inside a mode. These are
+enclosed by curly braces. Mode mappings should not use the same trigger
+as the mode’s. Mappings with the same trigger are ignored:</p><pre class="literallayout">mode &lt;Play&gt; {
+        # The following mapping is ignored:
+        map &lt;Play&gt; Hello
+}</pre><p>Modes cannot be nested.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_special_keys"></a>4.4. Special Keys</h3></div></div></div><p>Special keys are enclosed in ‘&lt;’ ‘&gt;’ brackets (e.g. <span class="strong"><strong>&lt;Play&gt;</strong></span>). These are
+used in <span class="strong"><strong>map</strong></span> actions to simulate a key press.</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+Nop
+</span></dt><dd>
+        Unmaps a trigger. Used to remove the default behaviour of a trigger
+        button without remapping it.
+</dd><dt><span class="term">
+F1
+, </span><span class="term">
+F2
+, </span><span class="term">
+F3
+, </span><span class="term">
+F4
+, </span><span class="term">
+F5
+, </span><span class="term">
+F6
+, </span><span class="term">
+F7
+, </span><span class="term">
+F8
+, </span><span class="term">
+F9
+, </span><span class="term">
+F10
+, </span><span class="term">
+F11
+, </span><span class="term">
+F12
+</span></dt><dd>
+        Function keys
+</dd><dt><span class="term">
+Up
+, </span><span class="term">
+Down
+, </span><span class="term">
+Left
+, </span><span class="term">
+Right
+</span></dt><dd>
+        Arrow keys
+</dd></dl></div><p>Home, End, PageUp, PageDown</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+Return
+, </span><span class="term">
+Enter
+, </span><span class="term">
+CR
+</span></dt><dd>
+        Synonyms for the Return key
+</dd><dt><span class="term">
+Del
+</span></dt><dd>
+        Forward delete
+</dd><dt><span class="term">
+BS
+</span></dt><dd>
+        Backspace
+</dd><dt><span class="term">
+Esc
+</span></dt><dd>
+        Escape
+</dd></dl></div><p>CapsLock, NumLock</p><p>Tab, Space</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+VolumeUp
+, </span><span class="term">
+VolumeDown
+, </span><span class="term">
+Mute
+</span></dt><dd>
+        Volume keys
+</dd></dl></div><p>BrightnessUp, BrightnessDown, ContrastUp, ContrastDown</p><p>Help</p><p>Power, Eject</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+VidMirror
+</span></dt><dd>
+        Mirror displays
+</dd><dt><span class="term">
+Play
+, </span><span class="term">
+Next
+, </span><span class="term">
+Previous
+, </span><span class="term">
+Fast
+, </span><span class="term">
+Rewind
+</span></dt><dd>
+        Media keys
+</dd><dt><span class="term">
+IlluminationUp
+, </span><span class="term">
+IlluminationDown
+, </span><span class="term">
+IlluminationToggle
+</span></dt><dd>
+        Keyboard backlight
+</dd></dl></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_escaping"></a>Escaping</h4></div></div></div><p>To simulate a literal ‘&lt;’ character, it must be escaped with a backslash.
+Because backslash is used as an escape prefix, literal backslashes must
+also be escaped with a backslash.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+‘&lt;’ becomes ‘\&lt;’
+</li><li class="listitem">
+‘\’ becomes ‘\\’
+</li></ul></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_modifiers"></a>4.5. Modifiers</h3></div></div></div><p>Modifiers can be applied to any key used in <span class="strong"><strong>map</strong></span> actions. Modifiers can
+also be chained. Modifiers must be prefixed to the key they’re modifying,
+both of which are surrounded by ‘&lt;’ ‘&gt;’ brackets.</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+D-
+</span></dt><dd>
+        Apple/Command key
+</dd><dt><span class="term">
+A-
+</span></dt><dd>
+        Option key
+</dd><dt><span class="term">
+C-
+</span></dt><dd>
+        Control key
+</dd><dt><span class="term">
+S-
+</span></dt><dd>
+        Shift key
+</dd></dl></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_examples"></a>Examples</h4></div></div></div><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+&lt;C-c&gt;
+</span></dt><dd>
+        Control-c
+</dd><dt><span class="term">
+&lt;C-S-c&gt;
+</span></dt><dd>
+        Control-Shift-c
+</dd><dt><span class="term">
+&lt;D-A-C-S-f&gt;
+</span></dt><dd>
+        Apple-Option-Control-Shift-f
+</dd><dt><span class="term">
+&lt;A-VolumeDown&gt;
+</span></dt><dd>
+        Option-VolumeDown
+</dd><dt><span class="term">
+&lt;D-A-Eject&gt;
+</span></dt><dd>
+        Apple-Option-Eject
+</dd></dl></div></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_examples_2"></a>5. EXAMPLES</h2></div></div></div><p>Video controls:</p><pre class="literallayout">map &lt;Up&gt; &lt;Left&gt;
+map &lt;Play&gt; &lt;Space&gt;
+map &lt;Down&gt; &lt;Right&gt;</pre><p>Don’t launch iTunes when pressing the middle button:</p><pre class="literallayout">map &lt;Play&gt; &lt;Nop&gt;</pre><p>Let volume buttons function normally, and activate video controls when
+pressing <span class="strong"><strong>&lt;Play&gt;</strong></span> twice:</p><pre class="literallayout">mode &lt;Play&gt;&lt;Play&gt; {
+        map &lt;Up&gt; &lt;Left&gt;
+        map &lt;Play&gt; &lt;Space&gt;
+        map &lt;Down&gt; &lt;Right&gt;
+}</pre><p>Open frequently used applications:</p><pre class="literallayout">cmd &lt;Up&gt;       open -a Terminal
+cmd &lt;Play&gt;     open -a Xcode
+cmd &lt;Down&gt;     open -a Firefox
+cmd &lt;Up&gt;&lt;Play&gt; open -a Dictionary</pre><p>Compile code in Vim:</p><pre class="literallayout">map &lt;Play&gt; &lt;Esc&gt;:make&lt;CR&gt;</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_see_also"></a>6. SEE ALSO</h2></div></div></div><p>dome-key(1).</p></div></div></body></html>
