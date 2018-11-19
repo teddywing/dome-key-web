@@ -2,6 +2,7 @@ use aquatic_prime;
 use log;
 use mysql;
 use paddle;
+use url;
 use zip_lib;
 
 error_chain! {
@@ -12,6 +13,7 @@ error_chain! {
 
         Log(log::SetLoggerError);
         MySql(mysql::error::Error);
+        UrlParse(url::ParseError);
         Zip(zip_lib::result::ZipError);
 
         AquaticPrime(aquatic_prime::errors::Error);

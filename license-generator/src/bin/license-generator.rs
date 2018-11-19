@@ -4,10 +4,13 @@ extern crate fastcgi;
 extern crate log;
 extern crate mysql;
 extern crate simplelog;
+extern crate url;
 
 extern crate license_generator;
 
 use std::io::{Read, Write};
+
+use url::Url;
 
 use license_generator::database;
 use license_generator::errors::*;
@@ -79,9 +82,39 @@ fn main() -> Result<()> {
                     Ok(_) => {
                         // TODO: Print message to be appended to user email
 
-                        write!(&mut req.stdout(), "Content-Type: text/plain
+                        let secret = match purchaser.secret {
+                            Some(s) => s,
+                            None => return response::error_500(
+                                &mut req.stdout(),
+                                Some("Empty secret".into())
+                            ),
+                        };
 
-200 OK")
+                        let license_download_url = match Url::parse_with_params(
+                            "https://domekey.teddywing.com/license",
+                            &[
+                                ("name", purchaser.name),
+                                ("email", purchaser.email),
+                                ("secret", &secret),
+                            ],
+                        ) {
+                            Ok(u) => u,
+                            Err(e) => return response::error_500(
+                                &mut req.stdout(),
+                                Some(e.into())
+                            ),
+                        };
+
+                        write!(
+                            &mut req.stdout(),
+                            "Content-Type: text/plain
+
+Thanks so much for purchasing DomeKey!
+
+Download your license here:
+{url}",
+                            url = license_download_url,
+                        )
                             .unwrap_or(());
 
                         return;

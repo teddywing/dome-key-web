@@ -6,9 +6,9 @@ use sha1;
 use errors::*;
 
 pub struct Purchaser<'a> {
-    name: &'a str,
-    email: &'a str,
-    secret: Option<String>,
+    pub name: &'a str,
+    pub email: &'a str,
+    pub secret: Option<String>,
 }
 
 impl<'a> Purchaser<'a> {
