@@ -249,9 +249,6 @@ fn main() -> Result<()> {
                     let params = req.param("QUERY_STRING").unwrap();
                     let mut responses = HtmlResponse { writer: &mut req.stdout() };
                     return build_response(&mut cx, &params, &mut responses);
-
-                    // TODO: Extract from /license/download
-                    // trait for HTML vs. text/zip
                 },
 
                 // Respond with a zip archive of the license file
