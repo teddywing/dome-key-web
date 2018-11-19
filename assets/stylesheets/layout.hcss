@@ -113,6 +113,13 @@ ul {
 }
 
 
+@media screen and (max-width: 870px) {
+	.content video {
+		width: 100%;
+		margin-left: 0;
+	}
+}
+
 @media screen and (max-width: 767px) {
 	header {
 		margin-left: -8px;
