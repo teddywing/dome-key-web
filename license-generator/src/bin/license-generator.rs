@@ -112,7 +112,7 @@ Thanks so much for purchasing DomeKey!
 Download your license here:
 {url}
 
-DomeKey can be installed with:
+Install DomeKey with:
 
 	$ brew install teddywing/DomeKey/dome-key
 
