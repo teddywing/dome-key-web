@@ -57,7 +57,7 @@ where W: 'a + Write {
             "Status: 200
 Content-Type: text/html\n\n{}",
             format!(
-                include_str!("../../../thank-you.html"),
+                include_str!("../../../thank-you-license-download.html"),
                 name = name,
                 email = email,
                 secret = secret,

@@ -26,13 +26,29 @@
 			Thanks so much for buying DomeKey!
 		</p>
 
-		<p>
-			Please check your email for a link to download your license.
-		</p>
+		<form method="post" action="/license/download">
+			<input type="hidden" name="name" value="{name}" />
+			<input type="hidden" name="email" value="{email}" />
+			<input type="hidden" name="secret" value="{secret}" />
+
+			<button
+				type="submit"
+				class="button button-magenta
+					display-block margin-left-auto margin-right-auto
+					margin-top-2 margin-bottom-2">
+				Download your license
+			</button>
+		</form>
 
 		<p>
 			If you need any help,
 			<a href="mailto:inquiry@domekey.teddywing.com">let me know</a>.
+		</p>
+
+		<p>
+			Also, check out the
+			<a href="https://github.com/teddywing/DomeKey">source code</a>
+			if you’re interested.
 		</p>
 	</div>
 </body>
