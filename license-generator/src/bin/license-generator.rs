@@ -80,8 +80,6 @@ fn main() -> Result<()> {
 
                 match purchaser.insert(&mut cx) {
                     Ok(_) => {
-                        // TODO: Print message to be appended to user email
-
                         let secret = match purchaser.secret {
                             Some(s) => s,
                             None => return response::error_500(
@@ -112,7 +110,16 @@ fn main() -> Result<()> {
 Thanks so much for purchasing DomeKey!
 
 Download your license here:
-{url}",
+{url}
+
+DomeKey can be installed with:
+
+	$ brew install teddywing/DomeKey/dome-key
+
+Add your license by running:
+
+	$ dome-key --license PATH/TO/dome-key-license.plist
+",
                             url = license_download_url,
                         )
                             .unwrap_or(());
