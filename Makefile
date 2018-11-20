@@ -20,7 +20,7 @@ license-generator/target/release/license:
 		--tty \
 		--volume $$PWD/license-generator:/app \
 		--workdir /app \
-		rust:1.30.1-stretch \
+		rust:1.30.1-trusty \
 		cargo build --release
 
 .PHONY: deploy
