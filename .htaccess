@@ -1,6 +1,3 @@
-SetEnv LOG_FILE "license_generator.log"
-SetEnv DATABASE_URL "mysql://localhost:3306/dome_key"
-
 ErrorDocument 404 /404.html
 
 

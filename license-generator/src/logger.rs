@@ -1,4 +1,3 @@
-use std::env;
 use std::fs::OpenOptions;
 
 use fastcgi;
@@ -7,8 +6,7 @@ use simplelog::{Config, LevelFilter, WriteLogger};
 use errors::*;
 
 pub fn init() -> Result<()> {
-    let log_file_path = env::var("LOG_FILE")
-        .chain_err(|| "LOG_FILE environment variable not found")?;
+    let log_file_path = env!("LOG_FILE");
 
     let log_file = OpenOptions::new()
         .append(true)

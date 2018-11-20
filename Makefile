@@ -13,7 +13,7 @@ internal_error.html: internal_error.in.html
 
 # Compile binaries for Linux
 license-generator/target/release/fulfillment \
-license-generator/target/release/license:
+license-generator/target/release/license: production-config/env
 	docker run \
 		--rm \
 		--interactive \
@@ -21,7 +21,10 @@ license-generator/target/release/license:
 		--volume $$PWD/license-generator:/app \
 		--workdir /app \
 		rust:1.30.1-trusty \
-		cargo build --release
+		bash -c " \
+			source ../production-config/env; \
+			cargo build --release \
+		"
 
 .PHONY: deploy
 deploy: license-generator/target/release/fulfillment \
