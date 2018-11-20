@@ -12,8 +12,6 @@ echo 'Moving files...'
 mv "$REMOTE_PUBLIC_WWW/fulfillment" "$REMOTE_PUBLIC_WWW/fulfillment.fcgi"
 mv "$REMOTE_PUBLIC_WWW/license" "$REMOTE_PUBLIC_WWW/license.fcgi"
 
-mv production-config/.htaccess "$REMOTE_PUBLIC_WWW"
-
 
 echo 'Restarting FastCGI scripts...'
 set +e

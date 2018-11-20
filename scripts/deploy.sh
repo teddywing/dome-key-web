@@ -9,6 +9,7 @@ echo 'Deploying...'
 
 rsync -avz \
 	--exclude 'assets/stylesheets' \
+	.htaccess \
 	400.html \
 	404.html \
 	assets \
