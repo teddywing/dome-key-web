@@ -10,3 +10,22 @@ assets/styles.css: assets/stylesheets/main.hcss \
 
 internal_error.html: internal_error.in.html
 	./scripts/generate_500.py > $@
+
+# Compile binaries for Linux
+license-generator/target/release/fulfillment \
+license-generator/target/release/license:
+	docker run \
+		--rm \
+		--interactive \
+		--tty \
+		--volume $$PWD/license-generator:/app \
+		--workdir /app \
+		rust:1.30.1-stretch \
+		cargo build --release
+
+.PHONY: deploy
+deploy: license-generator/target/release/fulfillment \
+		license-generator/target/release/license \
+		internal_error.html \
+		assets/styles.css
+	bash ./scripts/deploy.sh
