@@ -7,7 +7,7 @@ ErrorDocument 404 /404.html
 RewriteEngine on
 
 # Redirect HTTP to HTTPS
-RewriteCond %{HTTPS} != on
+RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
 # Disallow access to .htaccess
