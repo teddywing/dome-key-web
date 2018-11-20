@@ -15,6 +15,13 @@ mv "$REMOTE_PUBLIC_WWW/license" "$REMOTE_PUBLIC_WWW/license.fcgi"
 mv production-config/.htaccess "$REMOTE_PUBLIC_WWW"
 
 
+echo 'Restarting FastCGI scripts...'
+set +e
+killall fulfillment.fcgi
+killall license.fcgi
+set -e
+
+
 echo 'Provisioning...'
 
 sh "$HOME/scripts/provision.sh"
