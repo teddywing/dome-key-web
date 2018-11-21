@@ -27,7 +27,7 @@ mod tests {
     #[test]
     #[ignore]
     fn license_produces_a_valid_zip_file() {
-        let file = File::create("/tmp/license.zip").unwrap();
+        let mut file = File::create("/tmp/license.zip").unwrap();
         let plist = r#"<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -43,6 +43,6 @@ mod tests {
 </dict>
 </plist>"#;
 
-        license(file, plist.as_bytes()).unwrap();
+        license(&mut file, plist.as_bytes()).unwrap();
     }
 }
