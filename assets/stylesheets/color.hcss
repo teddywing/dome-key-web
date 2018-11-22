@@ -13,7 +13,3 @@ set(MURKY_POND, #91947f)
 .color-maroon {
 	color: MAROON;
 }
-
-.color-murky-pond {
-	color: MURKY_POND;
-}

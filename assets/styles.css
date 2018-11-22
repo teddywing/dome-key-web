@@ -2,9 +2,6 @@ html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abb
 .color-maroon {
 	color: #4e0303;
 }
-.color-murky-pond {
-	color: #91947f;
-}
 h1, h2, h3, h4, h5, h6 {
 	font-family: "Lucida Grande", "Lucida Sans Unicode", Geneva, sans-serif;
 }
@@ -16,6 +13,10 @@ h2 {
 .code {
 	font-family: "Monaco", monospace;
     line-height: 1.6em;
+}
+.shell-command:before {
+	content: '$ ';
+	color: #91947f;
 }
 .font-size-0\.8 {
 	font-size: 0.8em;
