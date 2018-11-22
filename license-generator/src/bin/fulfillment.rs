@@ -133,10 +133,12 @@ Download your license here:
 Install DomeKey with:
 
 	$ brew install teddywing/DomeKey/dome-key
+	$ brew services start teddywing/DomeKey/dome-key
 
 Add your license by running:
 
 	$ dome-key --license PATH/TO/dome-key-license.plist
+	$ brew services restart teddywing/DomeKey/dome-key
 ",
                             url = license_download_url,
                         )
