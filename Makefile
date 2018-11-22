@@ -18,8 +18,8 @@ license-generator/target/release/license: production-config/env
 		--rm \
 		--interactive \
 		--tty \
-		--volume $$PWD/license-generator:/app \
-		--workdir /app \
+		--volume $$PWD:/app \
+		--workdir /app/license-generator \
 		rust:1.30.1-trusty \
 		bash -c " \
 			source ../production-config/env; \
