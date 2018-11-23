@@ -1,3 +1,9 @@
+.PHONY: run
+run:
+	ls license-generator/target/debug/fulfillment \
+			license-generator/target/debug/license | \
+		entr -r lighttpd -f lighttpd.conf -D
+
 .PHONY: css
 css: assets/styles.css
 
