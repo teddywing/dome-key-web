@@ -1,6 +1,6 @@
 include(reset.css)
 include(color.hcss)
-include(typography.css)
+include(typography.hcss)
 include(links.hcss)
 include(buttons.hcss)
 include(layout.hcss)
