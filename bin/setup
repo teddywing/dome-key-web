@@ -46,6 +46,9 @@ if [ "$1" = "--install" ]; then
 	if ! program_exists mysql; then
 		brew install mariadb
 	fi
+
+	install_if_not_found lighttpd
+	install_if_not_found entr
 fi
 
 
