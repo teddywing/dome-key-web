@@ -18,6 +18,8 @@
 # License along with DomeKey Web. If not, see
 # <https://www.gnu.org/licenses/>.
 
+set -ex
+
 function program_exists () {
 	local program="$1"
 
