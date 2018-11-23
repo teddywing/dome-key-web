@@ -60,3 +60,9 @@ fi
 vim license-generator/.env
 source license-generator/.env
 migrate-up
+
+
+mkdir -p license-generator/private/
+touch license-generator/private/paddle.pubkey.asc
+touch license-generator/private/public_key.txt
+touch license-generator/private/private_key.txt
