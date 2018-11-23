@@ -47,11 +47,11 @@ if [ "$1" = "--install" ]; then
 fi
 
 
-if [ ! -f .env ]; then
-	cp .env.sample .env
+if [ ! -f license-generator/.env ]; then
+	cp license-generator/env.sample license-generator/.env
 fi
 
 
-vim .env
-source .env
+vim license-generator/.env
+source license-generator/.env
 migrate-up
