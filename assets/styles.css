@@ -12,7 +12,7 @@ h2 {
 }
 .code {
 	font-family: "Monaco", monospace;
-    line-height: 1.6em;
+	line-height: 1.6em;
 }
 .shell-command:before {
 	content: '$ ';
@@ -91,8 +91,8 @@ body {
 header { margin-left: -90px; }
 header h1 { display: none; }
 h2 {
-    margin-top: 1.2em;
-    margin-bottom: 0.4em;
+	margin-top: 1.2em;
+	margin-bottom: 0.4em;
 }
 p {
 	margin-top: 0.8em;
@@ -161,7 +161,7 @@ ul {
 .code-block {
 	padding: 12px 16px;
 	overflow: auto;
-    border: solid 2px #8c6e6e;
+	border: solid 2px #8c6e6e;
 	border-radius: 6px;
 	box-shadow: inset 1px 1px 10px #402929;
 	background-color: #2d1f1c;

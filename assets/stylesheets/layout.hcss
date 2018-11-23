@@ -11,8 +11,8 @@ header { margin-left: -90px; }
 header h1 { display: none; }
 
 h2 {
-    margin-top: 1.2em;
-    margin-bottom: 0.4em;
+	margin-top: 1.2em;
+	margin-bottom: 0.4em;
 }
 
 p {
@@ -103,7 +103,7 @@ ul {
 	padding: 12px 16px;
 	overflow: auto;
 
-    border: solid 2px HAAGEN_DASZ_BLACK_RASPBERRY;
+	border: solid 2px HAAGEN_DASZ_BLACK_RASPBERRY;
 	border-radius: 6px;
 	box-shadow: inset 1px 1px 10px MILK_CHOCOLATE;
 
